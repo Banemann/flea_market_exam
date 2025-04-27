@@ -1,13 +1,25 @@
-<div id="item">
-    <img src="{{ url_for('static', filename='images/'+item.item_image) }}">
-    <p>
-        {{ item.item_name }}
-    </p>    
-    <div>
-        {{ "{:,}".format(item.item_price)  }} Dkk
+<article id="item">
+    <figure>
+        <img src="{{ url_for('static', filename='images/'+item.item_image) }}" alt="{{ item.item_name }}">
+    </figure>
+    
+    <header>
+        <h2>{{ item.item_name }}</h2>
+    </header>
+
+    <address>
+        {{ item.item_address }}
+    </address>
+
+    <div class="item-price">
+        <strong>{{ "{:,}".format(item.item_price) }} DKK</strong>
     </div>
     
-    <a href="/items/{{ item.item_pk }}" target="_blank">
-        Open in window
-    </a>
-</div>
+    {% if not standalone|default(false) %}
+    <div class="item-actions">
+        <a href="/items/{{ item.item_pk }}" target="_blank" class="button">
+            Open in window
+        </a>
+    </div>
+    {% endif %}
+</article>

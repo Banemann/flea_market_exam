@@ -291,5 +291,39 @@ def view_profile():
         pass
 
 
+##############################
+@app.post("/addfleamarket")
+def add_fleamarket():
+    try:
+        item_pk = uuid.uuid4().hex
+        item_name = x.validate_item_name()
+        item_address = x.validate_item_address()
+        item_image = x.validate_item_image()
+        item_price = x.validate_item_price()
+        item_latitude = x.validate_item_latitude()  
+        item_longitude = x.validate_item_longitude()
+        item_created_at = int(time.time())
 
+        # Fixed query with correct table name and column names
+        q = """INSERT INTO items 
+        (item_pk, item_name, item_address, item_image, item_price, item_lat, 
+        item_lon, item_created_at, item_updated_at, item_deleted_at) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
 
+        db, cursor = x.db()
+        # Fixed parameters with UUID and matching column names
+        cursor.execute(q, (item_pk, item_name, item_address, item_image, item_price, item_latitude, item_longitude, item_created_at, 0, 0))
+
+        if cursor.rowcount != 1: raise Exception("System under maintenance")
+
+        db.commit()
+        return redirect(url_for("show_index", message="Registration successful"))
+    except Exception as ex:
+        ic(ex)
+        # Return something in case of exception
+        return render_template("page_profile.html", title="Profile", 
+                            error_message="Could not add fleamarket: " + str(ex),
+                            x=x, is_session=True)
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()

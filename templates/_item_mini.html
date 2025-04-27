@@ -1,9 +1,17 @@
-<a href="/items/{{ item.item_pk }}" mix-get class="item">
-    <img src="{{ url_for('static', filename='images/'+ item.item_image) }}">
-    <p>
-        {{ item.item_name }}
-    </p>
-    <div>
-        {{ "{:,}".format(item.item_price)  }} Dkk
+<article href="/items/{{ item.item_pk }}" mix-get class="item">
+    <figure>
+        <img src="{{ url_for('static', filename='images/'+ item.item_image) }}" alt="{{ item.item_name }}">
+    </figure>
+    
+    <div class="item-content">
+        <h3>{{ item.item_name }}</h3>
+        
+        <address>
+            {{ item.item_address }}
+        </address>
+        
+        <div class="item-price">
+            {{ "{:,}".format(item.item_price) }} DKK
+        </div>
     </div>
-</a>
+</article>
