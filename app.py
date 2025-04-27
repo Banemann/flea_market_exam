@@ -54,7 +54,7 @@ def get_item_by_pk(item_pk):
         q = "SELECT * FROM items WHERE item_pk = %s"
         cursor.execute(q, (item_pk,))
         item = cursor.fetchone()
-        html_item = render_template("_item.html", item=item, standalone=True)
+        html_item = render_template("_item.html", item=item)
         return f"""
             <mixhtml mix-replace="#item">
                 {html_item}
