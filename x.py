@@ -30,13 +30,35 @@ def validate_user_logged():
 
 ##############################
 USER_NAME_MIN = 2
-USER_NAME_MAX = 20
+USER_NAME_MAX = 30
 USER_NAME_REGEX = f"^.{{{USER_NAME_MIN},{USER_NAME_MAX}}}$"
 def validate_user_name():
     error = "company_ex user_name"
     user_name = request.form.get("user_name", "").strip()
     if not re.match(USER_NAME_REGEX, user_name): raise Exception(error)
     return user_name
+
+
+##############################
+USER_LAST_NAME_MIN = 2
+USER_LAST_NAME_MAX = 30
+USER_LAST_NAME_REGEX = f"^.{{{USER_LAST_NAME_MIN},{USER_LAST_NAME_MAX}}}$"
+def validate_user_last_name():
+    error = "company_ex user_last_name"
+    user_last_name = request.form.get("user_last_name", "").strip()
+    if not re.match(USER_LAST_NAME_REGEX, user_last_name): raise Exception(error)
+    return user_last_name
+
+
+##############################
+USER_USERNAME_MIN = 3
+USER_USERNAME_MAX = 30
+USER_USERNAME_REGEX = f"^[a-zA-Z0-9_]{{{USER_USERNAME_MIN},{USER_USERNAME_MAX}}}$"
+def validate_user_username():
+    error = "company_ex user_username"
+    user_username = request.form.get("user_username", "").strip()
+    if not re.match(USER_USERNAME_REGEX, user_username): raise Exception(error)
+    return user_username
 
 
 ##############################
@@ -49,12 +71,24 @@ def validate_page_number(page_number):
 
 
 ##############################
-REGEX_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-def validate_email():
-    error = f"company_ex email"
-    email = request.form.get("email", "").strip()
-    if not re.match(REGEX_EMAIL, email): raise Exception(error)
-    return email
+USER_EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+def validate_user_email():
+    error = f"company_ex user_email"
+    user_email = request.form.get("user_email", "").strip()
+    if not re.match(USER_EMAIL_REGEX, user_email): raise Exception(error)
+    return user_email
+
+
+##############################
+USER_PASSWORD_MIN = 8
+USER_PASSWORD_MAX = 64
+USER_PASSWORD_REGEX = f"^.{{{USER_PASSWORD_MIN},{USER_PASSWORD_MAX}}}$"
+def validate_user_password():
+    error = "company_ex user_password"
+    user_password = request.form.get("user_password", "").strip()
+    if not re.match(USER_PASSWORD_REGEX, user_password): raise Exception(error)
+    return user_password
+
 
 ##############################
 ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "gif"]
@@ -64,14 +98,14 @@ MAX_FILES = 5
 def validate_item_images():
     images_names = []
     if "files" not in request.files:
-         raise Exception("company_ex at least one file")
+        raise Exception("company_ex at least one file")
     
     files = request.files.getlist('files')
     
     # TODO: Fix the validation for 0 files
     # if not files == [None]:
     #     raise Exception("company_ex at least one file")  
-       
+    
     if len(files) > MAX_FILES:
         raise Exception("company_ex max 5 files")
 

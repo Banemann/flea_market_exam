@@ -132,7 +132,7 @@ def get_items_by_page(page_number):
 @app.get("/signup")
 def view_signup():
     try:
-        return render_template("page_signup.html", title="Fleamarket | Signup", x=x)
+        return render_template("view_signup.html", title="Fleamarket | Signup", x=x)
     except Exception as ex:
         ic(ex)
     finally:
@@ -150,16 +150,16 @@ def signup():
         user_password = x.validate_user_password()
         hashed_password = generate_password_hash(user_password)
         user_created_at = int(time.time())
+        user_pk = uuid.uuid4().hex  # Generate UUID for primary key
 
         q = """INSERT INTO users 
-        (user_pk, user_name, user_last_name, user_username, user_email, 
+        (user_pk, user_username, user_name, user_last_name, user_email, 
         user_password, user_created_at, user_updated_at, user_deleted_at) 
-        VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s)"""
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
 
         db, cursor = x.db()
-        # Modified parameters without verification fields
-        cursor.execute(q, (user_name, user_last_name, user_username, user_email,
-                        hashed_password, user_created_at, 0, 0))
+        cursor.execute(q, (user_pk, user_username, user_name, user_last_name, 
+                        user_email, hashed_password, user_created_at, 0, 0))
 
         if cursor.rowcount != 1: raise Exception("System under maintenance")
         db.commit()
@@ -168,19 +168,31 @@ def signup():
     except Exception as ex:
         ic(ex)
         if "db" in locals(): db.rollback()
-        # request.form is a tuple
         old_values = request.form.to_dict()
+        
         if "username" in str(ex):
             old_values.pop("user_username", None)
-            return render_template("page_signup.html",                                   
+            return render_template("view_signup.html", title="Fleamarket | Signup",                            
                 error_message="Invalid username", old_values=old_values,
                 user_username_error="input_error", x=x)
-        if "firstname" in str(ex):
-            old_values.pop("user_name", None)
-        return render_template("view_signup.html",
-        error_message="Invalid name", old_values=old_values,
-        user_name_error="input_error", x=x)
-
+        if "lastname" in str(ex):
+            old_values.pop("user_last_name", None)
+            return render_template("view_signup.html", title="Fleamarket | Signup",
+                error_message="Invalid last name", old_values=old_values,
+                user_last_name_error="input_error", x=x)
+        if "email" in str(ex):
+            old_values.pop("user_email", None)
+            return render_template("view_signup.html", title="Fleamarket | Signup",
+                error_message="Invalid email", old_values=old_values,
+                user_email_error="input_error", x=x)
+        if "password" in str(ex):
+            old_values.pop("user_password", None)
+            return render_template("view_signup.html", title="Fleamarket | Signup",
+                error_message="Invalid password", old_values=old_values,
+                user_password_error="input_error", x=x)
+            
+        return render_template("view_signup.html", title="Fleamarket | Signup",
+            error_message=str(ex), old_values=old_values, x=x)
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
@@ -206,38 +218,35 @@ def login():
     try:
         user_email = x.validate_user_email()
         user_password = x.validate_user_password()
-
+        
         db, cursor = x.db()
-        q = "SELECT * FROM users WHERE user_email = %s"
+        q = "SELECT * FROM users WHERE user_email = %s AND user_deleted_at = 0"
         cursor.execute(q, (user_email,))
         user = cursor.fetchone()
-        ic(user)
-        if not user: raise Exception("User not found")
+        
+        if not user: raise Exception("Invalid credentials")
+        
         if not check_password_hash(user["user_password"], user_password):
             raise Exception("Invalid credentials")
-        user.pop("user_password")
+            
+        # Remove password from session data
+        user.pop("user_password", None)
         session["user"] = user
         
-        # Remove this verification check
-        # if user["user_verified_at"] == 0:
-        #    raise Exception("Please verify your email")
-
-        return redirect(url_for("view_profile"))
+        # Return MixHTML that updates both the page and the navigation
+        new_nav = render_template("_nav.html")
+        
+        return f"""
+        <mixhtml mix-redirect="/profile">
+            <mixhtml mix-replace="nav">
+                {new_nav}
+            </mixhtml>
+        </mixhtml>
+        """
     except Exception as ex:
         ic(ex)
-        if "db" in locals(): db.rollback()
-        
-        # Add return statement for exceptions
-        active_login = "active"
-        if "email" in str(ex).lower():
-            return render_template("view_login.html", title="Login", active_login=active_login,
-                                error_message=str(ex), user_email_error="input_error", x=x)
-        elif "password" in str(ex).lower() or "credentials" in str(ex).lower():
-            return render_template("view_login.html", title="Login", active_login=active_login,
-                                error_message=str(ex), user_password_error="input_error", x=x)
-        else:
-            return render_template("view_login.html", title="Login", active_login=active_login,
-                                error_message=str(ex), x=x)
+        return render_template("view_login.html", title="Fleamarket | Login", 
+                            error_message=str(ex), x=x)
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
@@ -247,8 +256,15 @@ def login():
 @app.get("/logout")
 def logout():
     try:
-        session.pop("user")
-        return redirect(url_for("view_login"))
+        session.clear() 
+        new_nav = render_template("_nav.html")  # Render updated nav without user
+        return f"""
+        <mixhtml mix-redirect="/">
+            <mixhtml mix-replace="nav">
+                {new_nav}
+            </mixhtml>
+        </mixhtml>
+        """
     except Exception as ex:
         ic(ex)
         return redirect(url_for("view_index"))
