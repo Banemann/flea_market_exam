@@ -1,0 +1,71 @@
+{% include "_header.html" %}
+{% include "_nav.html" %}
+
+<main id="profile" class="page"
+mix-url="/profile"
+mix-bottom="body"
+mix-title="{{ title | default('Company') }}"
+mix-hide=".page"
+mix-show="#profile">
+
+
+<h1>Your Profile</h1>
+{% if session.user %}
+<div>
+    <p>Username: {{ session.user.user_username }}</p>
+    <p>Name: {{ session.user.user_name }} {{ session.user.user_last_name }}</p>
+    <p>Email: {{ session.user.user_email }}</p>
+</div>
+
+<div>
+    <h2>Register your fleamarket</h2>
+    <form mix-post="/addfleamarket">
+        <div>
+            <label for="">
+                <span>Fleamarket name</span>
+            </label>
+            <input name="item_name" type="text" mix-check="{{ x.ITEM_NAME_REGEX }}">
+        </div> 
+
+        <div>
+            <label for="">
+                <span>Address</span>
+            </label>
+            <input name="item_address" type="text" mix-check="{{ x.ITEM_ADDRESS_REGEX }}">
+        </div>
+
+        <div>
+            <label for="">
+                <span>Image</span>
+            </label>
+            <input name="item_image" type="text" mix-check="{{ x.ITEM_IMAGE_REGEX }}">
+        </div>
+
+        <div>
+            <label for="">
+                <span>Latitude</span>
+            </label>
+            <input name="item_latitude" type="text" mix-check="{{ x.ITEM_LATITUDE_REGEX }}">
+        </div>
+
+        <div>
+            <label for="">
+                <span>Longitude</span>
+            </label>
+            <input name="item_longitude" type="text" mix-check="{{ x.ITEM_LONGITUDE_REGEX }}">
+        </div>
+        <button
+        mix-await="Please wait..."
+        mix-default="Add"
+        >
+            Add
+        </button>
+    </form>
+</div>
+
+{% else %}
+<p>You are not logged in.</p>
+{% endif %}
+</main>
+
+{% include "_footer.html" %}

@@ -1,0 +1,61 @@
+{% include "_header.html" %}
+{% include "_nav.html" %}
+
+<main id="signup" class="page"
+mix-url="/signup"
+mix-bottom="body"
+mix-title="{{ title | default('Company') }}"
+mix-hide=".page"
+mix-show="#signup"
+>
+    
+    <h1>
+        Signup
+    </h1>
+    <form mix-post="/signup">
+        <div>
+            <label for="">
+                <span>username</span>
+                <span>{{ x.USER_USERNAME_MIN }} to {{ x.USER_USERNAME_MAX }} characters</span>
+            </label>
+            <input name="user_username" type="text" mix-check="{{ x.USER_USERNAME_REGEX }}">
+        </div> 
+        <div>
+            <label for="">
+                <span>user name</span>
+                <span>{{ x.USER_NAME_MIN }} to {{ x.USER_NAME_MAX }} characters</span>
+            </label>
+            <input name="user_name" type="text" mix-check="{{ x.USER_NAME_REGEX }}">
+        </div> 
+        <div>
+            <label for="">
+                <span>user last name</span>
+                <span>{{ x.USER_LAST_NAME_MIN }} to {{ x.USER_LAST_NAME_MAX }} characters</span>
+            </label>
+            <input name="user_last_name" type="text" mix-check="{{ x.USER_LAST_NAME_REGEX }}">
+        </div>                 
+        <div>
+            <label for="">
+                <span>email</span>
+                <span></span>
+            </label>
+            <input name="user_email" type="text" mix-check="{{ x.USER_EMAIL_REGEX }}">
+        </div>
+        <div>
+            <label for="">
+                <span>password</span>
+                <span>{{ x.USER_PASSWORD_MIN }} to {{ x.USER_PASSWORD_MAX }} characters</span>
+            </label>
+            <input name="user_password" type="password" mix-check="{{ x.USER_PASSWORD_REGEX }}">
+        </div>        
+        <button
+        mix-await="Please wait..."
+        mix-default="Signup"
+        >
+            Signup
+        </button>
+    </form>
+
+</main>
+
+{% include "_footer.html" %}
