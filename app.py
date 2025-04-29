@@ -170,31 +170,26 @@ def signup():
     except Exception as ex:
         ic(ex)
         if "db" in locals(): db.rollback()
-        old_values = request.form.to_dict()
         
         if "username" in str(ex):
-            old_values.pop("user_username", None)
             return render_template("view_signup.html", title="Fleamarket | Signup",                            
-                error_message="Invalid username", old_values=old_values,
+                error_message="Invalid username",
                 user_username_error="input_error", x=x)
         if "lastname" in str(ex):
-            old_values.pop("user_last_name", None)
             return render_template("view_signup.html", title="Fleamarket | Signup",
-                error_message="Invalid last name", old_values=old_values,
+                error_message="Invalid last name",
                 user_last_name_error="input_error", x=x)
         if "email" in str(ex):
-            old_values.pop("user_email", None)
             return render_template("view_signup.html", title="Fleamarket | Signup",
-                error_message="Invalid email", old_values=old_values,
+                error_message="Invalid email",
                 user_email_error="input_error", x=x)
         if "password" in str(ex):
-            old_values.pop("user_password", None)
             return render_template("view_signup.html", title="Fleamarket | Signup",
-                error_message="Invalid password", old_values=old_values,
+                error_message="Invalid password",
                 user_password_error="input_error", x=x)
             
         return render_template("view_signup.html", title="Fleamarket | Signup",
-            error_message=str(ex), old_values=old_values, x=x)
+            error_message=str(ex), x=x)
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
@@ -268,12 +263,12 @@ def view_login():
 @app.post("/login")
 def login():
     try:
-        user_email = x.validate_user_email()
+        user_username = x.validate_user_username()
         user_password = x.validate_user_password()
         
         db, cursor = x.db()
-        q = "SELECT * FROM users WHERE user_email = %s AND user_deleted_at = 0"
-        cursor.execute(q, (user_email,))
+        q = "SELECT * FROM users WHERE user_username = %s AND user_deleted_at = 0"
+        cursor.execute(q, (user_username,))
         user = cursor.fetchone()
         
         if not user: raise Exception("Invalid credentials")

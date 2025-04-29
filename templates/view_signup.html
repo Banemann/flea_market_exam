@@ -12,6 +12,19 @@ mix-show="#signup"
     <h1>
         Signup
     </h1>
+
+    {% if message %}
+    <div class="success-message">
+        {{ message }}
+    </div>
+    {% endif %}
+    
+    {% if error_message %}
+    <div class="error-message">
+        {{ error_message }}
+    </div>
+    {% endif %}
+
     <form mix-post="/signup">
         <div>
             <label for="">
@@ -22,14 +35,14 @@ mix-show="#signup"
         </div> 
         <div>
             <label for="">
-                <span>user name</span>
+                <span>name</span>
                 <span>{{ x.USER_NAME_MIN }} to {{ x.USER_NAME_MAX }} characters</span>
             </label>
             <input name="user_name" type="text" mix-check="{{ x.USER_NAME_REGEX }}">
         </div> 
         <div>
             <label for="">
-                <span>user last name</span>
+                <span>last name</span>
                 <span>{{ x.USER_LAST_NAME_MIN }} to {{ x.USER_LAST_NAME_MAX }} characters</span>
             </label>
             <input name="user_last_name" type="text" mix-check="{{ x.USER_LAST_NAME_REGEX }}">
