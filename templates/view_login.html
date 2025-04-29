@@ -13,7 +13,19 @@ mix-show="#login">
         <p>Login to your account</p>
     </header>
 
-    <form mix-post="/login">             
+    {% if message %}
+    <div class="success-message">
+        {{ message }}
+    </div>
+    {% endif %}
+    
+    {% if error_message %}
+    <div class="error-message">
+        {{ error_message }}
+    </div>
+    {% endif %}
+
+    <form mix-post="/login">    
         <div>
             <label for="">
                 <span>email</span>

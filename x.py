@@ -193,44 +193,54 @@ def validate_item_longitude():
 
 
 ##############################
-def send_email(user_name, user_last_name):
+def send_email(user_name, user_lastname, verification_key):
     try:
         # Create a gmail
         # Enable (turn on) 2 step verification/factor in the google account manager
         # Visit: https://myaccount.google.com/apppasswords
-
+ 
         # Email and password of the sender's Gmail account
-        sender_email = ""
-        password = ""  # If 2FA is on, use an App Password instead
-
-        # Receiver email address
-        receiver_email = ""
-        
+        sender_email = "lindehojpizza@gmail.com"
+        password = "dfca sgvy uwwy brjx"  # If 2FA is on, use an App Password instead
+ 
+        # Get the user email from the form data
+        receiver_email = request.form.get("user_email", "")
+ 
         # Create the email message
         message = MIMEMultipart()
-        message["From"] = "My company name"
-        message["To"] = ""
-        message["Subject"] = "Welcome"
-
+        message["From"] = "Fleamarket App"
+        message["To"] = receiver_email
+        message["Subject"] = "Verify Your Fleamarket Account"
+ 
         # Body of the email
-        body = f"Thank you {user_name} {user_last_name} for signing up. Welcome."
-        # body = f"""To verify your account, please <a href="http://127.0.0.1/verify/{user_verification_key}">click here</a>"""
+        body = f"""
+        <p>Thank you {user_name} {user_lastname} for signing up to Fleamarket.</p>
+        <p>Please click here to verify your account:
+        <a href="http://127.0.0.1/verify/{verification_key}">Verify Account</a>
+        </p>
+        """
         message.attach(MIMEText(body, "html"))
-
+ 
         # Connect to Gmail's SMTP server and send the email
         with smtplib.SMTP("smtp.gmail.com", 587) as server:
             server.starttls()  # Upgrade the connection to secure
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, message.as_string())
         ic("Email sent successfully!")
-
+ 
         return "email sent"
-
+ 
     except Exception as ex:
         ic(ex)
         raise Exception("cannot send email")
     finally:
         pass
+
+
+##############################
+def user_verification_key():
+    """Generate a unique verification key"""
+    return str(uuid.uuid4())
 
 
 

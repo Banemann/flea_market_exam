@@ -151,20 +151,22 @@ def signup():
         hashed_password = generate_password_hash(user_password)
         user_created_at = int(time.time())
         user_pk = uuid.uuid4().hex  # Generate UUID for primary key
+        verification_key = uuid.uuid4().hex  # Generate verification key
 
         q = """INSERT INTO users 
         (user_pk, user_username, user_name, user_last_name, user_email, 
-        user_password, user_created_at, user_updated_at, user_deleted_at) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+        user_password, user_verification_key, user_created_at, user_updated_at, user_deleted_at) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
 
         db, cursor = x.db()
         cursor.execute(q, (user_pk, user_username, user_name, user_last_name, 
-                        user_email, hashed_password, user_created_at, 0, 0))
+                        user_email, hashed_password, verification_key, user_created_at, 0, 0))
 
         if cursor.rowcount != 1: raise Exception("System under maintenance")
-        db.commit()
 
-        return redirect(url_for("view_login", message="Signup successful"))
+        db.commit()
+        x.send_email(user_name, user_last_name, verification_key)
+        return redirect(url_for("view_login", message="Signup successful! Please check your email to verify your account before logging in."))
     except Exception as ex:
         ic(ex)
         if "db" in locals(): db.rollback()
@@ -193,6 +195,56 @@ def signup():
             
         return render_template("view_signup.html", title="Fleamarket | Signup",
             error_message=str(ex), old_values=old_values, x=x)
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+@app.get("/send-email")
+def send_email():
+    try:
+        x.send_email()
+        return "email"
+    except Exception as ex:
+        ic(ex)
+        return "error"
+
+
+##############################
+@app.get("/verify/<verification_key>")
+def verify_email(verification_key):
+    try:
+        db, cursor = x.db()
+
+        # Check if verification key exists
+        q = "SELECT * FROM users WHERE user_verification_key = %s"
+        cursor.execute(q, (verification_key,))
+        user = cursor.fetchone()
+
+        if not user:
+            raise Exception("Invalid verification link")
+
+        # Get current epoch time
+        current_time = int(time.time())
+
+        # Mark the user as verified with current timestamp
+        q = "UPDATE users SET user_verified_at = %s, user_verification_key = NULL WHERE user_pk = %s"
+        cursor.execute(q, (current_time, user["user_pk"]))
+
+        if cursor.rowcount != 1:
+            raise Exception("Error verifying account")
+
+        db.commit()
+
+        # Return a redirect to the login page with success message
+        return redirect(url_for("view_login", message="Your account has been successfully verified. You can now log in."))
+
+    except Exception as ex:
+        ic(ex)
+        if "db" in locals(): db.rollback()
+        return redirect(url_for("view_login", error_message="Error verifying account: " + str(ex)))
+
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
@@ -229,6 +281,10 @@ def login():
         if not check_password_hash(user["user_password"], user_password):
             raise Exception("Invalid credentials")
             
+        # Check if user has verified their account
+        if user["user_verified_at"] == 0:
+            raise Exception("Please verify your email before logging in. Check your inbox for a verification link.")
+            
         # Remove password from session data
         user.pop("user_password", None)
         session["user"] = user
@@ -245,8 +301,11 @@ def login():
         """
     except Exception as ex:
         ic(ex)
-        return render_template("view_login.html", title="Fleamarket | Login", 
-                            error_message=str(ex), x=x)
+        return f"""
+        <mixhtml mix-error="#login-error">
+            {str(ex)}
+        </mixhtml>
+        """
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
