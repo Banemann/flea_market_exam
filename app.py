@@ -6,7 +6,11 @@ import time
 import uuid
 import os
 import redis
+import re
 import json
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
@@ -297,8 +301,8 @@ def login():
     except Exception as ex:
         ic(ex)
         return f"""
-        <mixhtml mix-error="#login-error">
-            {str(ex)}
+        <mixhtml mix-top="#login">
+            <div class="error-message">Error updating profile: {str(ex)}</div>
         </mixhtml>
         """
     finally:
@@ -334,7 +338,7 @@ def view_profile():
         if "user" in session and session["user"]:
             is_session = True
             active_profile = "active"
-            return render_template("view_profile.html", title="Profile", user=session["user"], 
+            return render_template("view_profile.html", title="Fleamarket | Profile", user=session["user"], 
                                 x=x, active_profile=active_profile, is_session=is_session)
         else:
             return redirect(url_for("view_login"))
@@ -346,8 +350,27 @@ def view_profile():
 
 
 ##############################
-@app.post("/addfleamarket")
-def add_fleamarket():
+@app.get("/your-fleamarket")
+def view_user_fleamarket():
+    try:
+        is_session = False
+        if "user" in session and session["user"]:
+            is_session = True
+            active_profile = "active"
+            return render_template("view_user_fleamarket.html", title="Fleamarket | Your fleamarket", user=session["user"], 
+                                x=x, active_profile=active_profile, is_session=is_session)
+        else:
+            return redirect(url_for("view_login"))
+    except Exception as ex:
+        ic(ex)
+        return redirect(url_for("view_login"))
+    finally:
+        pass
+
+
+##############################
+@app.post("/your-fleamarket")
+def add_edit_fleamarket():
     try:
         item_pk = uuid.uuid4().hex
         item_name = x.validate_item_name()
@@ -381,3 +404,298 @@ def add_fleamarket():
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
+
+
+
+##############################
+@app.get("/update-profile")
+def view_update_profile():
+    try:
+        if "user" not in session or not session["user"]:
+            return redirect(url_for("view_login", error_message="Please login"))
+        
+        user = session["user"]
+        user_pk = user["user_pk"]
+        
+        db, cursor = x.db()
+        q = "SELECT * FROM users WHERE user_pk = %s"
+        cursor.execute(q, (user_pk,))
+        user_data = cursor.fetchone()
+        
+        return render_template("view_update_profile.html", title="Fleamarket | Update Profile",
+                            user=user_data, x=x)
+    except Exception as ex:
+        ic(ex)
+        return redirect(url_for("view_login", error_message="System error"))
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+@app.post("/update-profile")
+def update_profile():
+    try:
+        if "user" not in session or not session["user"]:
+            return redirect(url_for("view_login", error_message="Please login"))
+        
+        user_pk = session["user"]["user_pk"]
+        user_username = x.validate_user_username()
+        user_email = x.validate_user_email()
+        
+        # Get current password for verification
+        current_password = request.form.get("current_password", "").strip()
+        if not current_password:
+            raise Exception("Current password is required")
+        
+        # Get new password fields
+        new_password = request.form.get("new_password", "").strip()
+        confirm_password = request.form.get("confirm_password", "").strip()
+        
+        # Verify current user exists and password is correct
+        db, cursor = x.db()
+        q = "SELECT * FROM users WHERE user_pk = %s"
+        cursor.execute(q, (user_pk,))
+        user = cursor.fetchone()
+        
+        if not user:
+            raise Exception("User not found")
+        
+        # Verify the current password
+        if not check_password_hash(user["user_password"], current_password):
+            raise Exception("Current password is incorrect")
+        
+        # Check if user wants to change password
+        hashed_password = user["user_password"]  # Keep current by default
+        
+        if new_password:
+            # Validate new password format
+            if not re.match(x.USER_PASSWORD_REGEX, new_password):
+                raise Exception(f"New password must be {x.USER_PASSWORD_MIN} to {x.USER_PASSWORD_MAX} characters")
+            
+            # Check if passwords match
+            if new_password != confirm_password:
+                raise Exception("New passwords do not match")
+            
+            # Hash the new password
+            hashed_password = generate_password_hash(new_password)
+        
+        # Update user information in the database
+        q = """UPDATE users
+            SET user_username = %s, user_email = %s, user_password = %s, user_updated_at = %s
+            WHERE user_pk = %s"""
+        
+        cursor.execute(q, (user_username, user_email, hashed_password, int(time.time()), user_pk))
+        
+        if cursor.rowcount != 1:
+            raise Exception("System under maintenance")
+            
+        db.commit()
+        
+        # Update session data (but NOT the password)
+        session["user"]["user_username"] = user_username
+        session["user"]["user_email"] = user_email
+        
+        # Return success with properly placed message
+        return f"""
+        <mixhtml mix-top=".edit-profile">
+            <div class="success-message">Profile updated successfully!</div>
+        </mixhtml>
+        """
+        
+    except Exception as ex:
+        ic(ex)
+        if "db" in locals(): db.rollback()
+        
+        # Return error with properly placed message
+        return f"""
+        <mixhtml mix-top=".edit-profile">
+            <div class="error-message">Error updating profile: {str(ex)}</div>
+        </mixhtml>
+        """
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+@app.get("/reset-password")
+def view_reset_password():
+    try:
+        message = request.args.get("message", "")
+        error_message = request.args.get("error_message", "")
+        return render_template("view_reset_password.html", title="Fleamarket | Reset Password",
+                            message=message, error_message=error_message, x=x)
+    except Exception as ex:
+        ic(ex)
+        return redirect(url_for("view_login", error_message="System error"))
+
+
+##############################
+@app.post("/reset-password")
+def reset_password_request():
+    try:
+        user_email = x.validate_user_email()
+        
+        # Check if email exists in database
+        db, cursor = x.db()
+        q = "SELECT * FROM users WHERE user_email = %s AND user_deleted_at = 0"
+        cursor.execute(q, (user_email,))
+        user = cursor.fetchone()
+        
+        if not user:
+            # Don't reveal if email exists or not for security
+            return render_template("view_reset_password.html", 
+                message="If your email is registered, you will receive a password reset link shortly.",
+                x=x)
+        
+        # Generate reset token
+        reset_key = uuid.uuid4().hex
+        
+        # Store the reset token and set expiration (1 hour from now)
+        expiration_time = int(time.time()) + 3600
+        
+        # Update user with reset token
+        q = "UPDATE users SET user_verification_key = %s, user_updated_at = %s WHERE user_pk = %s"
+        cursor.execute(q, (reset_key, int(time.time()), user["user_pk"]))
+        
+        if cursor.rowcount != 1: 
+            raise Exception("System under maintenance")
+        
+        db.commit()
+        
+        # Send password reset email
+        send_reset_email(user["user_name"], user["user_last_name"], reset_key)
+        
+        return render_template("view_reset_password.html", 
+            message="If your email is registered, you will receive a password reset link shortly.",
+            x=x)
+        
+    except Exception as ex:
+        ic(ex)
+        if "db" in locals(): db.rollback()
+        return render_template("view_reset_password.html", 
+            error_message="An error occurred. Please try again.",
+            x=x)
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+@app.get("/reset-password/<reset_key>")
+def view_new_password(reset_key):
+    try:
+        # Verify the reset key exists and is not expired
+        db, cursor = x.db()
+        q = "SELECT * FROM users WHERE user_verification_key = %s AND user_deleted_at = 0"
+        cursor.execute(q, (reset_key,))
+        user = cursor.fetchone()
+        
+        if not user:
+            return redirect(url_for("view_login", error_message="Invalid or expired reset link"))
+        
+        # Check if the reset link is expired (older than 1 hour)
+        current_time = int(time.time())
+        if current_time - user["user_updated_at"] > 3600:  # 1 hour expiration
+            return redirect(url_for("view_login", error_message="Reset link expired. Please request a new one."))
+            
+        return render_template("view_new_password.html", reset_key=reset_key, x=x)
+        
+    except Exception as ex:
+        ic(ex)
+        return redirect(url_for("view_login", error_message="System error"))
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+@app.post("/reset-password/<reset_key>")
+def update_password(reset_key):
+    try:
+        # Verify the reset key exists
+        db, cursor = x.db()
+        q = "SELECT * FROM users WHERE user_verification_key = %s AND user_deleted_at = 0"
+        cursor.execute(q, (reset_key,))
+        user = cursor.fetchone()
+        
+        if not user:
+            return redirect(url_for("view_login", error_message="Invalid or expired reset link"))
+        
+        # Check if the reset link is expired (older than 1 hour)
+        current_time = int(time.time())
+        if current_time - user["user_updated_at"] > 3600:  # 1 hour expiration
+            return redirect(url_for("view_login", error_message="Reset link expired. Please request a new one."))
+        
+        # Validate password
+        user_password = x.validate_user_password()
+        user_password_confirm = request.form.get("user_password_confirm", "").strip()
+        
+        if user_password != user_password_confirm:
+            return render_template("view_new_password.html", 
+                error_message="Passwords do not match", 
+                reset_key=reset_key, x=x)
+        
+        # Hash new password and update user
+        hashed_password = generate_password_hash(user_password)
+        
+        q = "UPDATE users SET user_password = %s, user_verification_key = NULL, user_updated_at = %s WHERE user_pk = %s"
+        cursor.execute(q, (hashed_password, current_time, user["user_pk"]))
+        
+        if cursor.rowcount != 1:
+            raise Exception("Could not update password")
+            
+        db.commit()
+        
+        return redirect(url_for("view_login", message="Password has been reset successfully. You can now log in."))
+        
+    except Exception as ex:
+        ic(ex)
+        if "db" in locals(): db.rollback()
+        return render_template("view_new_password.html", 
+            error_message=str(ex), reset_key=reset_key, x=x)
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+def send_reset_email(user_name, user_lastname, reset_key):
+    """Send password reset email"""
+    try:
+        # Get the user email from the form data
+        receiver_email = request.form.get("user_email", "")
+
+        # Email and password of the sender's Gmail account
+        sender_email = "lindehojpizza@gmail.com"
+        password = "dfca sgvy uwwy brjx"  # App password
+
+        # Create the email message
+        message = MIMEMultipart()
+        message["From"] = "Fleamarket App"
+        message["To"] = receiver_email
+        message["Subject"] = "Reset Your Fleamarket Password"
+
+        # Body of the email
+        body = f"""
+        <p>Hello {user_name} {user_lastname},</p>
+        <p>We received a request to reset your password. Click the link below to create a new password:</p>
+        <p><a href="http://127.0.0.1/reset-password/{reset_key}">Reset Password</a></p>
+        <p>This link will expire in 1 hour.</p>
+        <p>If you did not request a password reset, you can ignore this email.</p>
+        """
+        message.attach(MIMEText(body, "html"))
+
+        # Connect to Gmail's SMTP server and send the email
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()  # Upgrade the connection to secure
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, message.as_string())
+        ic("Password reset email sent successfully!")
+
+    except Exception as ex:
+        ic(ex)
+        raise Exception("Cannot send password reset email")
+
+
