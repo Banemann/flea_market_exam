@@ -13,18 +13,6 @@ mix-show="#signup"
         Signup
     </h1>
 
-    {% if message %}
-    <div class="success-message">
-        {{ message }}
-    </div>
-    {% endif %}
-    
-    {% if error_message %}
-    <div class="error-message">
-        {{ error_message }}
-    </div>
-    {% endif %}
-
     <form mix-post="/signup">
         <div>
             <label for="">

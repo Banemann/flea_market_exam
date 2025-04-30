@@ -13,17 +13,6 @@ mix-show="#login">
         <p>Login to your account</p>
     </header>
 
-    {% if message %}
-    <div class="success-message">
-        {{ message }}
-    </div>
-    {% endif %}
-    
-    {% if error_message %}
-    <div class="error-message">
-        {{ error_message }}
-    </div>
-    {% endif %}
 
     <form mix-post="/login">    
         <div>
@@ -38,12 +27,21 @@ mix-show="#login">
                 <span>password</span>
             </label>
             <input name="user_password" type="password" mix-check="{{ x.USER_PASSWORD_REGEX }}">
-        </div>        
+        </div>    
+            
         <button
         mix-await="Please wait..."
-        mix-default="Login"
-        >
+        mix-default="Login">
             Login
+        </button>
+
+        <button 
+        type="button"
+        mix-get="/reset-password"
+        mix-page
+        mix-await="Please wait..."
+        mix-default="Reset password">
+            Reset password
         </button>
     </form>
 

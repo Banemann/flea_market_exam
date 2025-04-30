@@ -1,0 +1,8 @@
+<nav>
+    {% if "user" in session and session["user"] %}
+    <ul>
+        <li><a href="/update-profile" mix-get="/update-profile" mix-page>Update profile</a></li>
+        <li><a href="/user-fleamarket" mix-get="/user-fleamarket" mix-page>Add / update fleamarket</a></li>
+    </ul>
+    {% endif %}
+</nav>

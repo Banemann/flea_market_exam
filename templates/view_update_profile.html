@@ -1,0 +1,77 @@
+{% include "_header.html" %}
+{% include "_nav.html" %}
+
+<main id="update-profile" class="page"
+mix-url="/update-profile"
+mix-bottom="body"
+mix-title="{{ title | default('Company') }}"
+mix-hide=".page"
+mix-show="#update-profile">
+
+<nav>
+    {% if "user" in session and session["user"] %}
+    <ul>
+        <li><a href="/update-profile" mix-get="/update-profile" mix-page>Update profile</a></li>
+        <li><a href="/your-fleamarket" mix-get="/your-fleamarket" mix-page>Add / update fleamarket</a></li>
+    </ul>
+    {% endif %}
+</nav>
+
+<h1>Update profile</h1>
+{% if session.user %}
+
+<div class="edit-profile">
+    <form mix-post="/update-profile">
+        <div>
+            <label for="">
+                <span>Username</span>
+                <span>{{ x.USER_USERNAME_MIN }} to {{ x.USER_USERNAME_MAX }} characters</span>
+            </label>
+            <input name="user_username" type="text" value="{{ session.user.user_username }}" mix-check="{{ x.USER_USERNAME_REGEX }}">
+        </div> 
+        
+        <div>
+            <label for="">
+                <span>Email</span>
+            </label>
+            <input name="user_email" type="text" value="{{ session.user.user_email }}" mix-check="{{ x.USER_EMAIL_REGEX }}">
+        </div>
+        
+        <div>
+            <label for="">
+                <span>Current Password (required to make changes)</span>
+            </label>
+            <input name="current_password" type="password" required>
+        </div>
+        
+        <div>
+            <label for="">
+                <span>New Password (leave empty to keep current)</span>
+                <span>{{ x.USER_PASSWORD_MIN }} to {{ x.USER_PASSWORD_MAX }} characters</span>
+            </label>
+            <input name="new_password" type="password">
+        </div>
+        
+        <div>
+            <label for="">
+                <span>Confirm New Password</span>
+            </label>
+            <input name="confirm_password" type="password">
+        </div>
+        
+        <button
+        mix-await="Updating..."
+        mix-default="Update Profile">
+            Update Profile
+        </button>
+    </form>
+</div>
+
+
+
+{% else %}
+<p>You are not logged in.</p>
+{% endif %}
+</main>
+
+{% include "_footer.html" %}

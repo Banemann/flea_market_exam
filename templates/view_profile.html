@@ -8,66 +8,22 @@ mix-title="{{ title | default('Company') }}"
 mix-hide=".page"
 mix-show="#profile">
 
+<nav>
+    {% if "user" in session and session["user"] %}
+    <ul>
+        <li><a href="/update-profile" mix-get="/update-profile" mix-page>Update profile</a></li>
+        <li><a href="/your-fleamarket" mix-get="/your-fleamarket" mix-page>Add / update fleamarket</a></li>
+    </ul>
+    {% endif %}
+</nav>
+
 
 <h1>Your Profile</h1>
 {% if session.user %}
-<div>
+<div class="profile-info">
     <p>Username: {{ session.user.user_username }}</p>
     <p>Name: {{ session.user.user_name }} {{ session.user.user_last_name }}</p>
     <p>Email: {{ session.user.user_email }}</p>
-</div>
-
-<div>
-    <h2>Register your fleamarket</h2>
-    <form mix-post="/addfleamarket">
-        <div>
-            <label for="">
-                <span>Fleamarket name</span>
-            </label>
-            <input name="item_name" type="text" mix-check="{{ x.ITEM_NAME_REGEX }}">
-        </div> 
-
-        <div>
-            <label for="">
-                <span>Address</span>
-            </label>
-            <input name="item_address" type="text" mix-check="{{ x.ITEM_ADDRESS_REGEX }}">
-        </div>
-
-        <div>
-            <label for="">
-                <span>Image</span>
-            </label>
-            <input name="item_image" type="text" mix-check="{{ x.ITEM_IMAGE_REGEX }}">
-        </div>
-
-        <div>
-            <label for="">
-                <span>Ticket price</span>
-            </label>
-            <input name="item_price" type="text" mix-check="{{ x.ITEM_PRICE_REGEX }}">
-        </div>
-
-        <div>
-            <label for="">
-                <span>Latitude</span>
-            </label>
-            <input name="item_latitude" type="text" mix-check="{{ x.ITEM_LATITUDE_REGEX }}">
-        </div>
-
-        <div>
-            <label for="">
-                <span>Longitude</span>
-            </label>
-            <input name="item_longitude" type="text" mix-check="{{ x.ITEM_LONGITUDE_REGEX }}">
-        </div>
-        <button
-        mix-await="Please wait..."
-        mix-default="Add"
-        >
-            Add
-        </button>
-    </form>
 </div>
 
 {% else %}
