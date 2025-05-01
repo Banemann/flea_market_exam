@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: Apr 30, 2025 at 06:35 PM
+-- Generation Time: May 01, 2025 at 01:39 PM
 -- Server version: 9.3.0
 -- PHP Version: 8.2.27
 
@@ -94,13 +94,11 @@ INSERT INTO `users` (`user_pk`, `user_username`, `user_name`, `user_last_name`, 
 ('2e561df506cb460b927438f9070ff3f1', '111', 'dd', '', 'd@d.com', '', NULL, 0, 0, 0, 0, 0),
 ('3d7ff97dce6a4a01b21b53a5b3067d6d', '222', 'cc', '', 'c@c.com', '', NULL, 0, 0, 0, 0, 0),
 ('47c9425d30b84789b789d1ae69fe7ab3', '333', 'ee', '', 'e@e.com', '', NULL, 0, 0, 0, 0, 0),
-('7c1f538cf64043f3ae1d32ea17e7aeb1', 'casp2783', 'Casper', 'Banemann', 'casperbanemann@gmail.com', 'scrypt:32768:8:1$4SVdh2ro938DCXXE$95d770afb0acae1cf042c112f9b4525c728885fced809c83bbd0f7bfd5193f38c404fd85c2bff2036df38306c9f7db4c479e11465e309922258d73104813e3c3', NULL, 1745931924, 1745931908, 0, 0, 0),
 ('9e5a4d736dce48cc9ed9b307c5a9756b', 'Emil', 'Emil', 'Emil', 'emil@emil.com', 'scrypt:32768:8:1$R2X5dLw7Bv8702oV$bb4df70854ef6364128b39ebc42db047c6bf5991fe1071987b8ce691682760eb0f74fce716ad9a6012471a715c2b346415642c9e3d94aeb6b53d373229155bd2', '673f77af03b842a895c64dd2451f1a4b', 0, 1745928555, 0, 0, 0),
 ('af12f713a8ff4b079b9564dfad0cc6d7', '444', 'ff', '', 'f@f.com', '', NULL, 0, 0, 0, 0, 0),
 ('b6e4a3f3192d46fcb2b7c927576e6f77', '555', 'bb', '', 'b@b.com', '', NULL, 0, 0, 0, 0, 0),
 ('bf3d1b6e5189471a9e61713b6b644970', 'johnman', 'john', 'man', 'johnman@gmail.com', 'scrypt:32768:8:1$PUCvCrSVJyOVjdIT$9b62adcaae4d65bfe5e8e20507a5e199227f329a38bf45422217a17fcd3564cbcf903d21afe6ebd5827a60d7cd59203c253cd9f46b338b57d86117333f41fac0', NULL, 0, 1745927483, 0, 0, 0),
-('ccad60125be84df5aca4df3fa005d628', '666', 'aa', '', 'a@a.com', '', NULL, 0, 0, 0, 0, 1742382471),
-('df890cb24d7646cdb8838c74269390ed', 'casp', 'Casper', 'Banemann', 'anqlzxx@gmail.com', 'scrypt:32768:8:1$DRfxUmnQt9tBIpRD$b8c097b7bba673f18470d9784902edf270c2163cd3dc84316204a631cc247d67190673c8335064ab684af59f98d79fbf8a15bfb27a835c4d2123e93a86fab6ef', '61792707bcb54d71ae8e6338b41e33b9', 0, 1745930661, 0, 0, 0);
+('d4fd565c713c4ba19700965d6a536700', 'casp2783', 'Casper', 'Banemann', 'casperbanemann@gmail.com', 'scrypt:32768:8:1$zDjz6l85YtoNlM1a$0a9c48d8a8992d8421bf7e736b3fff45584a5db8660c08a10265d2b24de5b5934a1d2ee2e4415a3b37302830587c52c455c1f261b71fff5c9a0059cb51a9a022', NULL, 1746059204, 1746059179, 0, 0, 0);
 
 --
 -- Indexes for dumped tables

@@ -14,20 +14,87 @@ mix-show="#your-fleamarket">
 {% if session.user %}
 
 <div class="edit-profile">    
-    {% if edit_message %}
-    <div class="success-message">
-        {{ edit_message }}
+    <div class="message-container">
+        {% if message %}
+        <div class="success-message">
+            {{ message }}
+        </div>
+        {% endif %}
+        
+        {% if error_message %}
+        <div class="error-message">
+            {{ error_message }}
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-    
-    {% if edit_error_message %}
-    <div class="error-message">
-        {{ edit_error_message }}
-    </div>
-    {% endif %}
 
+    {% if user_fleamarket %}
+    
+        <h2>Edit your fleamarket</h2>
+        <form mix-post="/your-fleamarket/update" class="fleamarket-form">
+            <input type="hidden" name="item_pk" value="{{ user_fleamarket.item_pk }}">
+            <div>
+                <label for="">
+                    <span>Fleamarket name</span>
+                </label>
+                <input name="item_name" type="text" mix-check="{{ x.ITEM_NAME_REGEX }}" value="{{ user_fleamarket.item_name }}">
+            </div> 
+    
+            <div>
+                <label for="">
+                    <span>Address</span>
+                </label>
+                <input name="item_address" type="text" mix-check="{{ x.ITEM_ADDRESS_REGEX }}" value="{{ user_fleamarket.item_address }}">
+            </div>
+    
+            <div>
+                <label for="">
+                    <span>Image</span>
+                </label>
+                <input name="item_image" type="text" mix-check="{{ x.ITEM_IMAGE_REGEX }}" value="{{ user_fleamarket.item_image }}">
+            </div>
+    
+            <div>
+                <label for="">
+                    <span>Ticket price</span>
+                </label>
+                <input name="item_price" type="text" mix-check="{{ x.ITEM_PRICE_REGEX }}" value="{{ user_fleamarket.item_price }}">
+            </div>
+    
+            <div>
+                <label for="">
+                    <span>Latitude</span>
+                </label>
+                <input name="item_latitude" type="text" mix-check="{{ x.ITEM_LATITUDE_REGEX }}" value="{{ user_fleamarket.item_lat }}">
+            </div>
+    
+            <div>
+                <label for="">
+                    <span>Longitude</span>
+                </label>
+                <input name="item_longitude" type="text" mix-check="{{ x.ITEM_LONGITUDE_REGEX }}" value="{{ user_fleamarket.item_lon }}">
+            </div>
+            <div class="button-group">
+                <button
+                type="submit"
+                mix-await="Updating..."
+                mix-default="Update">
+                    Update
+                </button>
+            </div>
+        </form>
+
+        <form mix-post="/your-fleamarket/delete" style="margin-top: 10px;">
+            <input type="hidden" name="item_pk" value="{{ user_fleamarket.item_pk }}">
+            <button type="submit" class="delete-btn" mix-await="Deleting..." mix-default="Delete Fleamarket">
+                Delete Fleamarket
+            </button>
+        </form>
+
+    {% else %}
+        
         <h2>Register your fleamarket</h2>
-        <form mix-post="/addfleamarket">
+        <form mix-post="/your-fleamarket">
             <div>
                 <label for="">
                     <span>Fleamarket name</span>
@@ -71,14 +138,12 @@ mix-show="#your-fleamarket">
             </div>
             <button
             mix-await="Please wait..."
-            mix-default="Add"
-            >
+            mix-default="Add">
                 Add
             </button>
         </form>
+    {% endif %}
 </div>
-
-
 
 {% else %}
 <p>You are not logged in.</p>
@@ -86,4 +151,3 @@ mix-show="#your-fleamarket">
 </main>
 
 {% include "_footer.html" %}
-

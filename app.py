@@ -39,7 +39,7 @@ def disable_cache(response):
 def view_index():
     try:
         db, cursor = x.db()
-        q = "SELECT * FROM items ORDER BY item_created_at LIMIT 2"
+        q = "SELECT * FROM items WHERE item_deleted_at = 0 ORDER BY item_created_at LIMIT 2"
         cursor.execute(q)
         items = cursor.fetchall()
         return render_template("view_index.html", title="Fleamarket | Home", items=items)
@@ -55,7 +55,7 @@ def view_index():
 def get_item_by_pk(item_pk):
     try:
         db, cursor = x.db()
-        q = "SELECT * FROM items WHERE item_pk = %s"
+        q = "SELECT * FROM items WHERE item_pk = %s AND item_deleted_at = 0"
         cursor.execute(q, (item_pk,))
         item = cursor.fetchone()
         html_item = render_template("_item.html", item=item)
@@ -92,7 +92,7 @@ def get_items_by_page(page_number):
         offset = (page_number-1) * items_per_page
         extra_item = items_per_page + 1
         db, cursor = x.db()
-        q = "SELECT * FROM items ORDER BY item_created_at LIMIT %s OFFSET %s"
+        q = "SELECT * FROM items WHERE item_deleted_at = 0 ORDER BY item_created_at LIMIT %s OFFSET %s"
         cursor.execute(q, (extra_item, offset))
         items = cursor.fetchall()
         html = ""
@@ -340,25 +340,40 @@ def view_profile():
 @app.get("/your-fleamarket")
 def view_user_fleamarket():
     try:
-        is_session = False
-        if "user" in session and session["user"]:
-            is_session = True
-            active_profile = "active"
-            return render_template("view_user_fleamarket.html", title="Fleamarket | Your fleamarket", user=session["user"], 
-                                x=x, active_profile=active_profile, is_session=is_session)
-        else:
-            return redirect(url_for("view_login"))
+        if "user" not in session or not session["user"]:
+            return redirect(url_for("view_login", error_message="Please login"))
+        
+        user_pk = session["user"]["user_pk"]
+        message = request.args.get("message", "")
+        error_message = request.args.get("error_message", "")
+        
+        db, cursor = x.db()
+        q = "SELECT * FROM items WHERE item_user_fk = %s AND Item_deleted_at = 0 LIMIT 1"
+        cursor.execute(q, (user_pk,))
+        user_fleamarket = cursor.fetchone()
+        
+        return render_template("view_user_fleamarket.html", 
+                            title="Fleamarket | Your fleamarket", 
+                            user_fleamarket=user_fleamarket,
+                            message=message,
+                            error_message=error_message,
+                            x=x)
     except Exception as ex:
         ic(ex)
-        return redirect(url_for("view_login"))
+        return redirect(url_for("view_index", error_message="Error loading your fleamarket"))
     finally:
-        pass
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
 
 
 ##############################
 @app.post("/your-fleamarket")
-def add_edit_fleamarket():
+def add_fleamarket():
     try:
+        if "user" not in session or not session["user"]:
+            return redirect(url_for("view_login", error_message="Please login"))
+        
+        user_pk = session["user"]["user_pk"]
         item_pk = uuid.uuid4().hex
         item_name = x.validate_item_name()
         item_address = x.validate_item_address()
@@ -368,27 +383,164 @@ def add_edit_fleamarket():
         item_longitude = x.validate_item_longitude()
         item_created_at = int(time.time())
 
-        q = """INSERT INTO items 
-        (item_pk, item_name, item_address, item_image, item_price, item_lat, 
-        item_lon, item_created_at, item_updated_at, item_deleted_at) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-
+        # Check if user already has a fleamarket
         db, cursor = x.db()
-        cursor.execute(q, (item_pk, item_name, item_address, item_image, item_price, item_latitude, item_longitude, item_created_at, 0, 0))
+        q = "SELECT * FROM items WHERE item_user_fk = %s AND Item_deleted_at = 0"
+        cursor.execute(q, (user_pk,))
+        if cursor.fetchone():
+            raise Exception("You already have a fleamarket. Please edit or delete it first.")
 
-        if cursor.rowcount != 1: raise Exception("System under maintenance")
+        q = """INSERT INTO items 
+        (item_pk, item_user_fk, item_name, item_address, item_image, item_price, item_lat, 
+        item_lon, item_created_at, item_updated_at, Item_deleted_at) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+
+        cursor.execute(q, (item_pk, user_pk, item_name, item_address, item_image, 
+                        item_price, item_latitude, item_longitude, 
+                        item_created_at, 0, 0))
+
+        if cursor.rowcount != 1: 
+            raise Exception("System under maintenance")
 
         db.commit()
-        return redirect(url_for("show_index", message="Registration successful"))
+        
+        return f"""
+        <mixhtml mix-redirect="/your-fleamarket?message=Fleamarket added successfully">
+        </mixhtml>
+        """
+        
     except Exception as ex:
         ic(ex)
-        return render_template("page_profile.html", title="Profile", 
-                            error_message="Could not add fleamarket: " + str(ex),
-                            x=x, is_session=True)
+        if "db" in locals(): db.rollback()
+        
+        return f"""
+        <mixhtml mix-replace=".message-container">
+            <div class="message-container">
+                <div class="error-message">Error: {str(ex)}</div>
+            </div>
+        </mixhtml>
+        """
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
 
+
+##############################
+@app.post("/your-fleamarket/update")
+def update_fleamarket():
+    try:
+        if "user" not in session or not session["user"]:
+            return redirect(url_for("view_login", error_message="Please login"))
+        
+        user_pk = session["user"]["user_pk"]
+        item_pk = request.form.get("item_pk", "").strip()
+        item_name = x.validate_item_name()
+        item_address = x.validate_item_address()
+        item_image = x.validate_item_image()
+        item_price = x.validate_item_price()
+        item_latitude = x.validate_item_latitude()  
+        item_longitude = x.validate_item_longitude()
+        item_updated_at = int(time.time())
+
+        db, cursor = x.db()
+        
+        # Verify that this item belongs to the current user
+        q = "SELECT * FROM items WHERE item_pk = %s AND item_user_fk = %s AND item_deleted_at = 0"
+        cursor.execute(q, (item_pk, user_pk))
+        if not cursor.fetchone():
+            raise Exception("Fleamarket not found or you don't have permission to edit it")
+
+        q = """UPDATE items SET 
+            item_name = %s, 
+            item_address = %s, 
+            item_image = %s, 
+            item_price = %s, 
+            item_lat = %s, 
+            item_lon = %s, 
+            item_updated_at = %s 
+            WHERE item_pk = %s AND item_user_fk = %s"""
+
+        cursor.execute(q, (item_name, item_address, item_image, item_price, 
+                        item_latitude, item_longitude, item_updated_at, 
+                        item_pk, user_pk))
+
+        if cursor.rowcount != 1:
+            raise Exception("System under maintenance")
+            
+        db.commit()
+        
+        return f"""
+        <mixhtml mix-replace=".message-container">
+            <div class="message-container">
+                <div class="success-message">Fleamarket updated successfully!</div>
+            </div>
+        </mixhtml>
+        """
+        
+    except Exception as ex:
+        ic(ex)
+        if "db" in locals(): db.rollback()
+        
+        return f"""
+        <mixhtml mix-replace=".message-container">
+            <div class="message-container">
+                <div class="error-message">Error: {str(ex)}</div>
+            </div>
+        </mixhtml>
+        """
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+@app.post("/your-fleamarket/delete")
+def delete_fleamarket():
+    try:
+        if "user" not in session or not session["user"]:
+            return redirect(url_for("view_login", error_message="Please login"))
+        
+        user_pk = session["user"]["user_pk"]
+        item_pk = request.form.get("item_pk", "").strip()
+
+        db, cursor = x.db()
+        
+        # Verify that this item belongs to the current user
+        q = "SELECT * FROM items WHERE item_pk = %s AND item_user_fk = %s AND item_deleted_at = 0"
+        cursor.execute(q, (item_pk, user_pk))
+        if not cursor.fetchone():
+            raise Exception("Fleamarket not found or you don't have permission to delete it")
+
+        # Soft delete by setting the deleted_at timestamp
+        current_time = int(time.time())
+        q = "UPDATE items SET item_deleted_at = %s WHERE item_pk = %s AND item_user_fk = %s"
+        cursor.execute(q, (current_time, item_pk, user_pk))
+
+        if cursor.rowcount != 1:
+            raise Exception("System under maintenance")
+            
+        db.commit()
+        
+        # Reload the page to show the empty form
+        return f"""
+        <mixhtml mix-redirect="/your-fleamarket?message=Fleamarket deleted successfully">
+        </mixhtml>
+        """
+        
+    except Exception as ex:
+        ic(ex)
+        if "db" in locals(): db.rollback()
+        
+        return f"""
+        <mixhtml mix-replace=".message-container">
+            <div class="message-container">
+                <div class="error-message">Error: {str(ex)}</div>
+            </div>
+        </mixhtml>
+        """
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
 
 
 ##############################
