@@ -193,48 +193,72 @@ def validate_item_longitude():
 
 
 ##############################
-def send_email(user_name, user_lastname, verification_key):
+def send_email_notification(recipient_email, subject, body, user_name="", user_lastname=""):
+    """
+    Centralized email sending function
+    
+    Parameters:
+    - recipient_email: The email address of the recipient
+    - subject: Email subject line
+    - body: HTML content of the email
+    - user_name: Optional user's first name
+    - user_lastname: Optional user's last name
+    """
     try:
-        # Create a gmail
-        # Enable (turn on) 2 step verification/factor in the google account manager
-        # Visit: https://myaccount.google.com/apppasswords
- 
-        # Email and password of the sender's Gmail account
+        # Email credentials - centralized in one place
         sender_email = "lindehojpizza@gmail.com"
-        password = "dfca sgvy uwwy brjx"  # If 2FA is on, use an App Password instead
- 
-        # Get the user email from the form data
-        receiver_email = request.form.get("user_email", "")
- 
+        password = "dfca sgvy uwwy brjx"  # App password
+        
         # Create the email message
         message = MIMEMultipart()
         message["From"] = "Fleamarket App"
-        message["To"] = receiver_email
-        message["Subject"] = "Verify Your Fleamarket Account"
- 
-        # Body of the email
-        body = f"""
-        <p>Thank you {user_name} {user_lastname} for signing up to Fleamarket.</p>
-        <p>Please click here to verify your account:
-        <a href="http://127.0.0.1/verify/{verification_key}">Verify Account</a>
-        </p>
-        """
+        message["To"] = recipient_email
+        message["Subject"] = subject
+        
+        # Attach the HTML body
         message.attach(MIMEText(body, "html"))
- 
+        
         # Connect to Gmail's SMTP server and send the email
         with smtplib.SMTP("smtp.gmail.com", 587) as server:
             server.starttls()  # Upgrade the connection to secure
             server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, message.as_string())
-        ic("Email sent successfully!")
- 
-        return "email sent"
- 
+            server.sendmail(sender_email, recipient_email, message.as_string())
+        
+        ic(f"Email sent successfully: {subject}")
+        return True
+        
     except Exception as ex:
         ic(ex)
-        raise Exception("cannot send email")
-    finally:
-        pass
+        raise Exception(f"Cannot send email: {str(ex)}")
+
+def send_verification_email(user_name, user_lastname, verification_key, recipient_email):
+    """Send account verification email"""
+    subject = "Verify Your Fleamarket Account"
+    body = f"""
+    <p>Thank you {user_name} {user_lastname} for signing up to Fleamarket.</p>
+    <p>Please click here to verify your account:
+    <a href="http://127.0.0.1/verify/{verification_key}">Verify Account</a>
+    </p>
+    """
+    return send_email_notification(recipient_email, subject, body, user_name, user_lastname)
+
+def send_password_reset_email(user_name, user_lastname, reset_key, recipient_email):
+    """Send password reset email"""
+    subject = "Reset Your Fleamarket Password"
+    body = f"""
+    <p>Hello {user_name} {user_lastname},</p>
+    <p>We received a request to reset your password. Click the link below to create a new password:</p>
+    <p><a href="http://127.0.0.1/reset-password/{reset_key}">Reset Password</a></p>
+    <p>This link will expire in 1 hour.</p>
+    <p>If you did not request a password reset, you can ignore this email.</p>
+    """
+    return send_email_notification(recipient_email, subject, body, user_name, user_lastname)
+
+def send_account_deletion_email(user_name, user_lastname, recipient_email):
+    """Send account deletion notification email"""
+    subject = "Account Deletion Confirmation"
+    body = "<p>Your profile has been deleted.</p>"
+    return send_email_notification(recipient_email, subject, body, user_name, user_lastname)
 
 
 ##############################

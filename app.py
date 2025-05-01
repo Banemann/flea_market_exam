@@ -169,7 +169,7 @@ def signup():
         if cursor.rowcount != 1: raise Exception("System under maintenance")
 
         db.commit()
-        x.send_email(user_name, user_last_name, verification_key)
+        x.send_verification_email(user_name, user_last_name, verification_key, user_email)
         return redirect(url_for("view_login", message="Signup successful! Please check your email to verify your account before logging in."))
     except Exception as ex:
         ic(ex)
@@ -197,17 +197,6 @@ def signup():
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
-
-
-##############################
-@app.get("/send-email")
-def send_email():
-    try:
-        x.send_email()
-        return "email"
-    except Exception as ex:
-        ic(ex)
-        return "error"
 
 
 ##############################
@@ -550,7 +539,7 @@ def reset_password_request():
         db.commit()
         
         # Send password reset email
-        send_reset_email(user["user_name"], user["user_last_name"], reset_key)
+        x.send_reset_email(user["user_name"], user["user_last_name"], reset_key)
         
         return render_template("view_reset_password.html", 
             message="If your email is registered, you will receive a password reset link shortly.",
@@ -646,41 +635,6 @@ def update_password(reset_key):
 
 
 ##############################
-def send_reset_email(user_name, user_lastname, reset_key):
-    """Send password reset email"""
-    try:
-        receiver_email = request.form.get("user_email", "")
-
-        sender_email = "lindehojpizza@gmail.com"
-        password = "dfca sgvy uwwy brjx"  
-
-        # Create the email message
-        message = MIMEMultipart()
-        message["From"] = "Fleamarket App"
-        message["To"] = receiver_email
-        message["Subject"] = "Reset Your Fleamarket Password"
-
-        body = f"""
-        <p>Hello {user_name} {user_lastname},</p>
-        <p>We received a request to reset your password. Click the link below to create a new password:</p>
-        <p><a href="http://127.0.0.1/reset-password/{reset_key}">Reset Password</a></p>
-        <p>This link will expire in 1 hour.</p>
-        <p>If you did not request a password reset, you can ignore this email.</p>
-        """
-        message.attach(MIMEText(body, "html"))
-
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
-            server.starttls() 
-            server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, message.as_string())
-        ic("Password reset email sent successfully!")
-
-    except Exception as ex:
-        ic(ex)
-        raise Exception("Cannot send password reset email")
-
-
-##############################
 @app.post("/delete-account")
 def delete_account():
     try:
@@ -731,7 +685,7 @@ def delete_account():
         db.commit()
         
         # Send notification email
-        send_delete_notification_email(user_name, user_lastname, user_email)
+        x.send_account_deletion_email(user_name, user_lastname, user_email)
         
         # Clear session
         session.clear()
@@ -757,33 +711,3 @@ def delete_account():
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
-
-
-##############################
-def send_delete_notification_email(user_name, user_lastname, user_email):
-    """Send account deletion notification email"""
-    try:
-        # Email and password of the sender's Gmail account
-        sender_email = "lindehojpizza@gmail.com" 
-        password = "dfca sgvy uwwy brjx"  # App password
-        
-        # Create the email message
-        message = MIMEMultipart()
-        message["From"] = "Fleamarket App"
-        message["To"] = user_email
-        message["Subject"] = "Account Deletion Confirmation"
-        
-        # Simple body as requested
-        body = "<p>Your profile has been deleted.</p>"
-        message.attach(MIMEText(body, "html"))
-        
-        # Connect to Gmail's SMTP server and send the email
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
-            server.starttls()  # Upgrade the connection to secure
-            server.login(sender_email, password)
-            server.sendmail(sender_email, user_email, message.as_string())
-        ic("Account deletion notification email sent successfully!")
-        
-    except Exception as ex:
-        ic(ex)
-        # Don't raise exception, just log it since the account is already deleted
