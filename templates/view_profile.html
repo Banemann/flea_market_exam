@@ -26,6 +26,28 @@ mix-show="#profile">
     <p>Email: {{ session.user.user_email }}</p>
 </div>
 
+<div>
+    <button id="delete-profile-btn" class="delete-btn">Delete Profile</button>
+</div>
+
+<div id="delete-confirm-modal" class="modal hidden">
+    <div class="modal-content">
+        <h2>Delete Profile</h2>
+        <p>Please enter your password to confirm.</p>
+        <form mix-post="/delete-account">
+            <div class="form-group">
+                <label for="confirm_password">Password:</label>
+                <input id="confirm_password" name="confirm_password" type="password" required>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="cancel-delete-btn">Cancel</button>
+                <button type="submit" mix-await="Deleting..." mix-default="Delete Account">Delete Profile</button>
+            </div>
+            <div class="delete-message-area"></div>
+        </form>
+    </div>
+</div>
+
 {% else %}
 <p>You are not logged in.</p>
 {% endif %}

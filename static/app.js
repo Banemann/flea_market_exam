@@ -69,3 +69,22 @@ function add_markers_to_map(data){
 function onMarkerClick(event) {
     alert("Marker clicked at " + event.latlng);
 }
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const deleteProfileBtn = document.getElementById("delete-profile-btn");
+    const cancelDeleteBtn = document.getElementById("cancel-delete-btn");
+    const deleteConfirmModal = document.getElementById("delete-confirm-modal");
+    
+    if (deleteProfileBtn) {
+        deleteProfileBtn.addEventListener("click", function() {
+            deleteConfirmModal.classList.remove("hidden");
+        });
+    }
+    
+    if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener("click", function() {
+            deleteConfirmModal.classList.add("hidden");
+        });
+    }
+});

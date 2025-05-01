@@ -280,11 +280,9 @@ def login():
         if not check_password_hash(user["user_password"], user_password):
             raise Exception("Invalid credentials")
             
-        # Check if user has verified their account
         if user["user_verified_at"] == 0:
             raise Exception("Please verify your email before logging in. Check your inbox for a verification link.")
             
-        # Remove password from session data
         user.pop("user_password", None)
         session["user"] = user
         
@@ -381,14 +379,12 @@ def add_edit_fleamarket():
         item_longitude = x.validate_item_longitude()
         item_created_at = int(time.time())
 
-        # Fixed query with correct table name and column names
         q = """INSERT INTO items 
         (item_pk, item_name, item_address, item_image, item_price, item_lat, 
         item_lon, item_created_at, item_updated_at, item_deleted_at) 
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
 
         db, cursor = x.db()
-        # Fixed parameters with UUID and matching column names
         cursor.execute(q, (item_pk, item_name, item_address, item_image, item_price, item_latitude, item_longitude, item_created_at, 0, 0))
 
         if cursor.rowcount != 1: raise Exception("System under maintenance")
@@ -397,7 +393,6 @@ def add_edit_fleamarket():
         return redirect(url_for("show_index", message="Registration successful"))
     except Exception as ex:
         ic(ex)
-        # Return something in case of exception
         return render_template("page_profile.html", title="Profile", 
                             error_message="Could not add fleamarket: " + str(ex),
                             x=x, is_session=True)
@@ -443,16 +438,13 @@ def update_profile():
         user_username = x.validate_user_username()
         user_email = x.validate_user_email()
         
-        # Get current password for verification
         current_password = request.form.get("current_password", "").strip()
         if not current_password:
             raise Exception("Current password is required")
         
-        # Get new password fields
         new_password = request.form.get("new_password", "").strip()
         confirm_password = request.form.get("confirm_password", "").strip()
         
-        # Verify current user exists and password is correct
         db, cursor = x.db()
         q = "SELECT * FROM users WHERE user_pk = %s"
         cursor.execute(q, (user_pk,))
@@ -461,7 +453,6 @@ def update_profile():
         if not user:
             raise Exception("User not found")
         
-        # Verify the current password
         if not check_password_hash(user["user_password"], current_password):
             raise Exception("Current password is incorrect")
         
@@ -480,7 +471,6 @@ def update_profile():
             # Hash the new password
             hashed_password = generate_password_hash(new_password)
         
-        # Update user information in the database
         q = """UPDATE users
             SET user_username = %s, user_email = %s, user_password = %s, user_updated_at = %s
             WHERE user_pk = %s"""
@@ -492,11 +482,10 @@ def update_profile():
             
         db.commit()
         
-        # Update session data (but NOT the password)
+        # Update session data (-password)
         session["user"]["user_username"] = user_username
         session["user"]["user_email"] = user_email
         
-        # Return success with properly placed message
         return f"""
         <mixhtml mix-top=".edit-profile">
             <div class="success-message">Profile updated successfully!</div>
@@ -507,7 +496,6 @@ def update_profile():
         ic(ex)
         if "db" in locals(): db.rollback()
         
-        # Return error with properly placed message
         return f"""
         <mixhtml mix-top=".edit-profile">
             <div class="error-message">Error updating profile: {str(ex)}</div>
@@ -537,22 +525,19 @@ def reset_password_request():
     try:
         user_email = x.validate_user_email()
         
-        # Check if email exists in database
         db, cursor = x.db()
         q = "SELECT * FROM users WHERE user_email = %s AND user_deleted_at = 0"
         cursor.execute(q, (user_email,))
         user = cursor.fetchone()
         
         if not user:
-            # Don't reveal if email exists or not for security
             return render_template("view_reset_password.html", 
                 message="If your email is registered, you will receive a password reset link shortly.",
                 x=x)
         
-        # Generate reset token
         reset_key = uuid.uuid4().hex
         
-        # Store the reset token and set expiration (1 hour from now)
+        # Store the reset token and set expiration (1 hour)
         expiration_time = int(time.time()) + 3600
         
         # Update user with reset token
@@ -597,7 +582,7 @@ def view_new_password(reset_key):
         
         # Check if the reset link is expired (older than 1 hour)
         current_time = int(time.time())
-        if current_time - user["user_updated_at"] > 3600:  # 1 hour expiration
+        if current_time - user["user_updated_at"] > 3600:
             return redirect(url_for("view_login", error_message="Reset link expired. Please request a new one."))
             
         return render_template("view_new_password.html", reset_key=reset_key, x=x)
@@ -625,7 +610,7 @@ def update_password(reset_key):
         
         # Check if the reset link is expired (older than 1 hour)
         current_time = int(time.time())
-        if current_time - user["user_updated_at"] > 3600:  # 1 hour expiration
+        if current_time - user["user_updated_at"] > 3600:
             return redirect(url_for("view_login", error_message="Reset link expired. Please request a new one."))
         
         # Validate password
@@ -664,12 +649,10 @@ def update_password(reset_key):
 def send_reset_email(user_name, user_lastname, reset_key):
     """Send password reset email"""
     try:
-        # Get the user email from the form data
         receiver_email = request.form.get("user_email", "")
 
-        # Email and password of the sender's Gmail account
         sender_email = "lindehojpizza@gmail.com"
-        password = "dfca sgvy uwwy brjx"  # App password
+        password = "dfca sgvy uwwy brjx"  
 
         # Create the email message
         message = MIMEMultipart()
@@ -677,7 +660,6 @@ def send_reset_email(user_name, user_lastname, reset_key):
         message["To"] = receiver_email
         message["Subject"] = "Reset Your Fleamarket Password"
 
-        # Body of the email
         body = f"""
         <p>Hello {user_name} {user_lastname},</p>
         <p>We received a request to reset your password. Click the link below to create a new password:</p>
@@ -687,9 +669,8 @@ def send_reset_email(user_name, user_lastname, reset_key):
         """
         message.attach(MIMEText(body, "html"))
 
-        # Connect to Gmail's SMTP server and send the email
         with smtplib.SMTP("smtp.gmail.com", 587) as server:
-            server.starttls()  # Upgrade the connection to secure
+            server.starttls() 
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, message.as_string())
         ic("Password reset email sent successfully!")
@@ -699,3 +680,110 @@ def send_reset_email(user_name, user_lastname, reset_key):
         raise Exception("Cannot send password reset email")
 
 
+##############################
+@app.post("/delete-account")
+def delete_account():
+    try:
+        if "user" not in session or not session["user"]:
+            return redirect(url_for("view_login", error_message="Please login"))
+        
+        user_pk = session["user"]["user_pk"]
+        
+        # Get password for verification
+        confirm_password = request.form.get("confirm_password", "").strip()
+        if not confirm_password:
+            return f"""
+            <mixhtml mix-replace=".delete-message-area">
+                <div class="error-message">Please enter your password to confirm deletion</div>
+            </mixhtml>
+            """
+        
+        # Verify user exists and password is correct
+        db, cursor = x.db()
+        q = "SELECT * FROM users WHERE user_pk = %s"
+        cursor.execute(q, (user_pk,))
+        user = cursor.fetchone()
+        
+        if not user:
+            raise Exception("User not found")
+        
+        # Verify the password
+        if not check_password_hash(user["user_password"], confirm_password):
+            return f"""
+            <mixhtml mix-replace=".delete-message-area">
+                <div class="error-message">Incorrect password</div>
+            </mixhtml>
+            """
+        
+        # Store user email for notification
+        user_email = user["user_email"]
+        user_name = user["user_name"]
+        user_lastname = user["user_last_name"]
+        
+        # Soft delete the user by setting deleted_at timestamp
+        current_time = int(time.time())
+        q = "UPDATE users SET user_deleted_at = %s WHERE user_pk = %s"
+        cursor.execute(q, (current_time, user_pk))
+        
+        if cursor.rowcount != 1:
+            raise Exception("Could not delete account")
+            
+        db.commit()
+        
+        # Send notification email
+        send_delete_notification_email(user_name, user_lastname, user_email)
+        
+        # Clear session
+        session.clear()
+        
+        # Return success and redirect
+        return f"""
+        <mixhtml mix-redirect="/login">
+            <mixhtml mix-replace="nav">
+                {render_template("_nav.html")}
+            </mixhtml>
+        </mixhtml>
+        """
+        
+    except Exception as ex:
+        ic(ex)
+        if "db" in locals(): db.rollback()
+        
+        return f"""
+        <mixhtml mix-replace=".delete-message-area">
+            <div class="error-message">Error: {str(ex)}</div>
+        </mixhtml>
+        """
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+def send_delete_notification_email(user_name, user_lastname, user_email):
+    """Send account deletion notification email"""
+    try:
+        # Email and password of the sender's Gmail account
+        sender_email = "lindehojpizza@gmail.com" 
+        password = "dfca sgvy uwwy brjx"  # App password
+        
+        # Create the email message
+        message = MIMEMultipart()
+        message["From"] = "Fleamarket App"
+        message["To"] = user_email
+        message["Subject"] = "Account Deletion Confirmation"
+        
+        # Simple body as requested
+        body = "<p>Your profile has been deleted.</p>"
+        message.attach(MIMEText(body, "html"))
+        
+        # Connect to Gmail's SMTP server and send the email
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()  # Upgrade the connection to secure
+            server.login(sender_email, password)
+            server.sendmail(sender_email, user_email, message.as_string())
+        ic("Account deletion notification email sent successfully!")
+        
+    except Exception as ex:
+        ic(ex)
+        # Don't raise exception, just log it since the account is already deleted
