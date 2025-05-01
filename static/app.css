@@ -301,3 +301,60 @@ button{
 .message-container {
     margin-bottom: 20px;
 }
+
+
+
+
+.fleamarket-images {
+    margin: 20px 0;
+}
+
+.main-image img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.additional-images {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.additional-images img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+
+.file-input {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+#item .fleamarket-images {
+    margin: 0 0 20px 0;
+}
+
+#item .main-image img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 15px;
+}
+
+#item .additional-images {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#item .additional-images img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}

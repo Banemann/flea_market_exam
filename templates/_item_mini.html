@@ -1,6 +1,6 @@
 <article href="/items/{{ item.item_pk }}" mix-get class="item">
     <figure>
-        <img src="{{ url_for('static', filename='images/'+ item.item_image) }}" alt="{{ item.item_name }}">
+        <img src="/static/uploads/{{ item.item_image }}" alt="{{ item.item_name }}">
     </figure>
     
     <div class="item-content">

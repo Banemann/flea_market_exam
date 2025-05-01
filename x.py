@@ -95,37 +95,57 @@ def validate_user_password():
 
 ##############################
 ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "gif"]
-MAX_FILE_SIZE = 1 * 1024 * 1024  # 1MB - size in bytes
-MAX_FILES = 5
+MAX_FILE_SIZE = 5 * 1024 * 1024 
+MAX_FILES = 3
 
-def validate_item_images():
+
+###############################
+def validate_item_images():    
     images_names = []
     if "files" not in request.files:
-        raise Exception("company_ex at least one file")
+        return []
     
     files = request.files.getlist('files')
     
-    # TODO: Fix the validation for 0 files
-    # if not files == [None]:
-    #     raise Exception("company_ex at least one file")  
+    if not files or files[0].filename == '':
+        return []
     
     if len(files) > MAX_FILES:
-        raise Exception("company_ex max 5 files")
+        raise Exception(f"Maximum {MAX_FILES} images allowed")
 
     for the_file in files:
-        file_size = len(the_file.read()) # size is in bytes                 
-        file_name, file_extension = os.path.splitext(the_file.filename)
+        file_size = len(the_file.read())  # size is in bytes                 
         the_file.seek(0)
-        file_extension = file_extension.lstrip(".")
+        
+        file_name, file_extension = os.path.splitext(the_file.filename)
+        file_extension = file_extension.lstrip(".").lower()
+        
         if file_extension not in ALLOWED_EXTENSIONS:
-            raise Exception("company_ex file extension not allowed")  
+            raise Exception("File extension not allowed")
+            
         if file_size > MAX_FILE_SIZE:
-            raise Exception("company_ex file too large")  
+            raise Exception("File too large")
+            
         new_file_name = f"{uuid.uuid4().hex}.{file_extension}"
         images_names.append(new_file_name)
+        
         file_path = os.path.join("static/uploads", new_file_name)
-        the_file.save(file_path) 
+        the_file.save(file_path)
+        
     return images_names
+
+
+###############################
+def get_additional_images(item_pk):
+    """Get all additional images for a fleamarket item"""
+    db_conn, cursor = db()
+    try:
+        q = "SELECT image_name FROM images WHERE image_item_fk = %s"
+        cursor.execute(q, (item_pk,))
+        return [row['image_name'] for row in cursor.fetchall()]
+    finally:
+        cursor.close()
+        db_conn.close()
 
 
 ##############################

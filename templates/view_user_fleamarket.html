@@ -28,10 +28,30 @@ mix-show="#your-fleamarket">
         {% endif %}
     </div>
 
-    {% if user_fleamarket %}
+
+
+{% if user_fleamarket %}
+<div class="fleamarket-images">
+    <div class="main-image">
+        <img src="/static/uploads/{{ user_fleamarket.item_image }}" alt="{{ user_fleamarket.item_name }}">
+    </div>
     
+    {% if additional_images %}
+
+        <div class="additional-images">
+            {% for image in additional_images %}
+                <img src="/static/uploads/{{ image }}" alt="Additional image for {{ user_fleamarket.item_name }}">
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endif %}
+
+
+    {% if user_fleamarket %}
+
         <h2>Edit your fleamarket</h2>
-        <form mix-post="/your-fleamarket/update" class="fleamarket-form">
+        <form mix-post="/your-fleamarket/update" class="fleamarket-form" enctype="multipart/form-data">
             <input type="hidden" name="item_pk" value="{{ user_fleamarket.item_pk }}">
             <div>
                 <label for="">
@@ -48,10 +68,13 @@ mix-show="#your-fleamarket">
             </div>
     
             <div>
-                <label for="">
-                    <span>Image</span>
+                <label for="fleamarket-images">
+                    <span>Images (Upload up to 3 images)</span>
                 </label>
-                <input name="item_image" type="text" mix-check="{{ x.ITEM_IMAGE_REGEX }}" value="{{ user_fleamarket.item_image }}">
+                <input type="file" id="fleamarket-images" name="files" multiple accept="image/png, image/jpeg, image/jpg, image/gif" class="file-input">
+                {% if user_fleamarket.item_image %}
+                    <small>Current main image: {{ user_fleamarket.item_image }}</small>
+                {% endif %}
             </div>
     
             <div>
@@ -94,7 +117,7 @@ mix-show="#your-fleamarket">
     {% else %}
         
         <h2>Register your fleamarket</h2>
-        <form mix-post="/your-fleamarket">
+        <form mix-post="/your-fleamarket" enctype="multipart/form-data">
             <div>
                 <label for="">
                     <span>Fleamarket name</span>
@@ -110,10 +133,10 @@ mix-show="#your-fleamarket">
             </div>
     
             <div>
-                <label for="">
-                    <span>Image</span>
+                <label for="new-fleamarket-images">
+                    <span>Images (Upload up to 3 images)</span>
                 </label>
-                <input name="item_image" type="text" mix-check="{{ x.ITEM_IMAGE_REGEX }}">
+                <input type="file" id="new-fleamarket-images" name="files" multiple accept="image/png, image/jpeg, image/jpg, image/gif" class="file-input">
             </div>
     
             <div>

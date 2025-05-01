@@ -55,10 +55,28 @@ def view_index():
 def get_item_by_pk(item_pk):
     try:
         db, cursor = x.db()
+        
+        # Get main item details
         q = "SELECT * FROM items WHERE item_pk = %s AND item_deleted_at = 0"
         cursor.execute(q, (item_pk,))
         item = cursor.fetchone()
-        html_item = render_template("_item.html", item=item)
+        
+        if not item:
+            return """
+                <mixhtml mix-top="body">
+                    Item not found
+                </mixhtml>
+            """
+            
+        # Get additional images
+        additional_images = []
+        q_images = "SELECT image_name FROM images WHERE image_item_fk = %s"
+        cursor.execute(q_images, (item_pk,))
+        additional_images = [row['image_name'] for row in cursor.fetchall()]
+        
+        # Render template with both item and additional images
+        html_item = render_template("_item.html", item=item, additional_images=additional_images)
+        
         return f"""
             <mixhtml mix-replace="#item">
                 {html_item}
@@ -66,16 +84,9 @@ def get_item_by_pk(item_pk):
         """
     except Exception as ex:
         ic(ex)
-        if "company_ex page number" in str(ex):
-            return """
-                <mixhtml mix-top="body">
-                    page number invalid
-                </mixhtml>
-            """
-        # worst case, we cannot control exceptions
         return """
             <mixhtml mix-top="body">
-                ups
+                Error loading item
             </mixhtml>
         """
     finally:
@@ -348,13 +359,22 @@ def view_user_fleamarket():
         error_message = request.args.get("error_message", "")
         
         db, cursor = x.db()
+        # Get main fleamarket data
         q = "SELECT * FROM items WHERE item_user_fk = %s AND Item_deleted_at = 0 LIMIT 1"
         cursor.execute(q, (user_pk,))
         user_fleamarket = cursor.fetchone()
         
+        # Get additional images if fleamarket exists
+        additional_images = []
+        if user_fleamarket:
+            q_images = "SELECT image_name FROM images WHERE image_item_fk = %s"
+            cursor.execute(q_images, (user_fleamarket["item_pk"],))
+            additional_images = [row['image_name'] for row in cursor.fetchall()]
+        
         return render_template("view_user_fleamarket.html", 
                             title="Fleamarket | Your fleamarket", 
                             user_fleamarket=user_fleamarket,
+                            additional_images=additional_images,
                             message=message,
                             error_message=error_message,
                             x=x)
@@ -377,19 +397,28 @@ def add_fleamarket():
         item_pk = uuid.uuid4().hex
         item_name = x.validate_item_name()
         item_address = x.validate_item_address()
-        item_image = x.validate_item_image()
         item_price = x.validate_item_price()
         item_latitude = x.validate_item_latitude()  
         item_longitude = x.validate_item_longitude()
         item_created_at = int(time.time())
+        
+        # Handle image uploads
+        images = x.validate_item_images()
+        if not images:
+            raise Exception("Please upload at least one image")
+            
+        # Use the first image as the main image
+        item_image = images[0]
 
+        db_conn, cursor = x.db()
+        
         # Check if user already has a fleamarket
-        db, cursor = x.db()
         q = "SELECT * FROM items WHERE item_user_fk = %s AND Item_deleted_at = 0"
         cursor.execute(q, (user_pk,))
         if cursor.fetchone():
             raise Exception("You already have a fleamarket. Please edit or delete it first.")
 
+        # Insert the main fleamarket record
         q = """INSERT INTO items 
         (item_pk, item_user_fk, item_name, item_address, item_image, item_price, item_lat, 
         item_lon, item_created_at, item_updated_at, Item_deleted_at) 
@@ -399,10 +428,16 @@ def add_fleamarket():
                         item_price, item_latitude, item_longitude, 
                         item_created_at, 0, 0))
 
-        if cursor.rowcount != 1: 
-            raise Exception("System under maintenance")
+        # If there are additional images, store them in the images table
+        if len(images) > 1:
+            for img in images[1:]:
+                img_pk = uuid.uuid4().hex
+                q_img = """INSERT INTO images 
+                        (image_pk, image_item_fk, image_name, image_created_at) 
+                        VALUES (%s, %s, %s, %s)"""
+                cursor.execute(q_img, (img_pk, item_pk, img, item_created_at))
 
-        db.commit()
+        db_conn.commit()
         
         return f"""
         <mixhtml mix-redirect="/your-fleamarket?message=Fleamarket added successfully">
@@ -411,7 +446,7 @@ def add_fleamarket():
         
     except Exception as ex:
         ic(ex)
-        if "db" in locals(): db.rollback()
+        if "db_conn" in locals(): db_conn.rollback()
         
         return f"""
         <mixhtml mix-replace=".message-container">
@@ -422,7 +457,7 @@ def add_fleamarket():
         """
     finally:
         if "cursor" in locals(): cursor.close()
-        if "db" in locals(): db.close()
+        if "db_conn" in locals(): db_conn.close()
 
 
 ##############################
@@ -436,38 +471,68 @@ def update_fleamarket():
         item_pk = request.form.get("item_pk", "").strip()
         item_name = x.validate_item_name()
         item_address = x.validate_item_address()
-        item_image = x.validate_item_image()
         item_price = x.validate_item_price()
         item_latitude = x.validate_item_latitude()  
         item_longitude = x.validate_item_longitude()
         item_updated_at = int(time.time())
 
-        db, cursor = x.db()
+        db_conn, cursor = x.db()
         
         # Verify that this item belongs to the current user
         q = "SELECT * FROM items WHERE item_pk = %s AND item_user_fk = %s AND item_deleted_at = 0"
         cursor.execute(q, (item_pk, user_pk))
         if not cursor.fetchone():
             raise Exception("Fleamarket not found or you don't have permission to edit it")
-
-        q = """UPDATE items SET 
-            item_name = %s, 
-            item_address = %s, 
-            item_image = %s, 
-            item_price = %s, 
-            item_lat = %s, 
-            item_lon = %s, 
-            item_updated_at = %s 
-            WHERE item_pk = %s AND item_user_fk = %s"""
-
-        cursor.execute(q, (item_name, item_address, item_image, item_price, 
-                        item_latitude, item_longitude, item_updated_at, 
-                        item_pk, user_pk))
-
-        if cursor.rowcount != 1:
-            raise Exception("System under maintenance")
+        
+        # Handle image uploads if provided
+        images = x.validate_item_images()
+        if images:
+            # Use first image as main image
+            item_image = images[0]
             
-        db.commit()
+            # Update main image in items table
+            q = """UPDATE items SET 
+                item_name = %s, 
+                item_address = %s, 
+                item_image = %s, 
+                item_price = %s, 
+                item_lat = %s, 
+                item_lon = %s, 
+                item_updated_at = %s 
+                WHERE item_pk = %s AND item_user_fk = %s"""
+
+            cursor.execute(q, (item_name, item_address, item_image, item_price, 
+                            item_latitude, item_longitude, item_updated_at, 
+                            item_pk, user_pk))
+                
+            # Delete old additional images
+            q_del = "DELETE FROM images WHERE image_item_fk = %s"
+            cursor.execute(q_del, (item_pk,))
+            
+            # Add any additional images
+            if len(images) > 1:
+                for img in images[1:]:
+                    img_pk = uuid.uuid4().hex
+                    q_img = """INSERT INTO images 
+                            (image_pk, image_item_fk, image_name, image_created_at) 
+                            VALUES (%s, %s, %s, %s)"""
+                    cursor.execute(q_img, (img_pk, item_pk, img, item_updated_at))
+        else:
+            # Update without changing images
+            q = """UPDATE items SET 
+                item_name = %s, 
+                item_address = %s, 
+                item_price = %s, 
+                item_lat = %s, 
+                item_lon = %s, 
+                item_updated_at = %s 
+                WHERE item_pk = %s AND item_user_fk = %s"""
+
+            cursor.execute(q, (item_name, item_address, item_price, 
+                            item_latitude, item_longitude, item_updated_at, 
+                            item_pk, user_pk))
+
+        db_conn.commit()
         
         return f"""
         <mixhtml mix-replace=".message-container">
@@ -479,7 +544,7 @@ def update_fleamarket():
         
     except Exception as ex:
         ic(ex)
-        if "db" in locals(): db.rollback()
+        if "db_conn" in locals(): db_conn.rollback()
         
         return f"""
         <mixhtml mix-replace=".message-container">
@@ -490,10 +555,9 @@ def update_fleamarket():
         """
     finally:
         if "cursor" in locals(): cursor.close()
-        if "db" in locals(): db.close()
+        if "db_conn" in locals(): db_conn.close()
 
 
-##############################
 @app.post("/your-fleamarket/delete")
 def delete_fleamarket():
     try:
@@ -503,34 +567,27 @@ def delete_fleamarket():
         user_pk = session["user"]["user_pk"]
         item_pk = request.form.get("item_pk", "").strip()
 
-        db, cursor = x.db()
+        db_conn, cursor = x.db()
         
-        # Verify that this item belongs to the current user
-        q = "SELECT * FROM items WHERE item_pk = %s AND item_user_fk = %s AND item_deleted_at = 0"
-        cursor.execute(q, (item_pk, user_pk))
-        if not cursor.fetchone():
-            raise Exception("Fleamarket not found or you don't have permission to delete it")
-
-        # Soft delete by setting the deleted_at timestamp
-        current_time = int(time.time())
-        q = "UPDATE items SET item_deleted_at = %s WHERE item_pk = %s AND item_user_fk = %s"
-        cursor.execute(q, (current_time, item_pk, user_pk))
-
-        if cursor.rowcount != 1:
-            raise Exception("System under maintenance")
-            
-        db.commit()
+        # First delete associated images
+        q_del_img = "DELETE FROM images WHERE image_item_fk = %s"
+        cursor.execute(q_del_img, (item_pk,))
         
-        # Reload the page to show the empty form
+        # Then soft-delete the fleamarket
+        q = """UPDATE items SET 
+            item_deleted_at = %s 
+            WHERE item_pk = %s AND item_user_fk = %s"""
+        cursor.execute(q, (int(time.time()), item_pk, user_pk))
+        
+        db_conn.commit()
+        
         return f"""
         <mixhtml mix-redirect="/your-fleamarket?message=Fleamarket deleted successfully">
         </mixhtml>
         """
-        
     except Exception as ex:
         ic(ex)
-        if "db" in locals(): db.rollback()
-        
+        if "db_conn" in locals(): db_conn.rollback()
         return f"""
         <mixhtml mix-replace=".message-container">
             <div class="message-container">
@@ -540,7 +597,7 @@ def delete_fleamarket():
         """
     finally:
         if "cursor" in locals(): cursor.close()
-        if "db" in locals(): db.close()
+        if "db_conn" in locals(): db_conn.close()
 
 
 ##############################

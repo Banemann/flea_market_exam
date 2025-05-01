@@ -1,7 +1,17 @@
 <article id="item">
-    <figure>
-        <img src="{{ url_for('static', filename='images/'+item.item_image) }}" alt="{{ item.item_name }}">
-    </figure>
+    <div class="fleamarket-images">
+        <figure class="main-image">
+            <img src="/static/uploads/{{ item.item_image }}" alt="{{ item.item_name }}">
+        </figure>
+        
+        {% if additional_images %}
+            <div class="additional-images">
+                {% for image in additional_images %}
+                    <img src="/static/uploads/{{ image }}" alt="Additional image for {{ item.item_name }}">
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
     
     <header>
         <h2>{{ item.item_name }}</h2>
