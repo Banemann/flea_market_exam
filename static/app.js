@@ -16,8 +16,15 @@ function search(){
                 console.log(data)
                 data.forEach(item => {
                     const a = `<div>
-                                <img src="/static/images/${item.item_image}">
-                                <a href="/${item.item_name}">${item.item_name}</a>
+                    
+                                <a href="/items/${item.item_pk}">
+                                <img src="/static/uploads/${item.item_image}" alt="${item.item_name}">
+                                </a>
+
+                                <a href="/items/${item.item_pk}">
+                                ${item.item_name}
+                                </a>
+
                                 </div>`
                     search_results.insertAdjacentHTML("beforeend", a)
                 })

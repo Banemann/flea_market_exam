@@ -920,3 +920,20 @@ def delete_account():
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
+
+
+##############################
+@app.get("/search")
+def search():
+    try:
+        search_for = request.args.get("q", "") # car
+        # TODO: validate search_for
+        db, cursor = x.db()
+        q = "SELECT * FROM items WHERE item_name LIKE %s"
+        cursor.execute(q, (f"{search_for}%",))
+        rows = cursor.fetchall()
+        ic(rows)
+        return rows # [{'item_name': 'aa1', 'item_pk': '193e055791ed4f...
+    except Exception as ex:
+        ic(ex)
+        return "x", 400
