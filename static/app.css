@@ -358,3 +358,89 @@ button{
     object-fit: cover;
     border: 2px solid #ddd;
 }
+
+
+/*Admin page styles*/
+#admin {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+#admin h1 {
+    margin-bottom: 20px;
+}
+
+.users-table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.users-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.users-table th, 
+.users-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.users-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.user-row.blocked {
+    background-color: #fff0f0;
+}
+
+.block-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.unblock-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.admin-item-image {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.items-table {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.items-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.items-table th, 
+.items-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.item-row.blocked {
+    background-color: #fff0f0;
+}

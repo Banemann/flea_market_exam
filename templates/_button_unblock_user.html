@@ -1,0 +1,9 @@
+<div id="unblock-{{ user.user_pk }}">
+    <button 
+        class="unblock-btn"
+        mix-patch="/unblock/{{ user.user_pk }}"
+        mix-await="Unblocking..."
+        mix-default="Unblock User">
+        Unblock User
+    </button>
+</div>
