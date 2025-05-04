@@ -59,8 +59,8 @@ mix-show="#admin">
                     {% for item in items: %}
                     <tr class="item-row {% if item.item_blocked_at != 0 %}blocked{% endif %}">
                         <td>{{ item.item_pk[:8] }}...</td>
-                        <td><img src="/static/uploads/{{ item.item_image }}" alt="{{ item.item_name }}" class="admin-item-image"></td>
                         <td>{{ item.item_name }}</td>
+                        <td><img src="/static/uploads/{{ item.item_image }}" alt="{{ item.item_name }}" class="admin-item-image"></td>
                         <td>
                             {% if item.item_blocked_at == 0: %}
                                 {% include "_button_block_item.html" %}

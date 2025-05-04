@@ -39,7 +39,11 @@ def disable_cache(response):
 def view_index():
     try:
         db, cursor = x.db()
-        q = "SELECT * FROM items WHERE item_deleted_at = 0 ORDER BY item_created_at LIMIT 2"
+        q = """SELECT i.* FROM items i
+        JOIN users u ON i.item_user_fk = u.user_pk
+        WHERE i.item_deleted_at = 0 AND i.item_blocked_at = 0 
+        AND u.user_blocked_at = 0
+        ORDER BY i.item_created_at LIMIT 2"""
         cursor.execute(q)
         items = cursor.fetchall()
         return render_template("view_index.html", title="Fleamarket | Home", items=items)
@@ -103,7 +107,11 @@ def get_items_by_page(page_number):
         offset = (page_number-1) * items_per_page
         extra_item = items_per_page + 1
         db, cursor = x.db()
-        q = "SELECT * FROM items WHERE item_deleted_at = 0 ORDER BY item_created_at LIMIT %s OFFSET %s"
+        q = """SELECT i.* FROM items i
+        JOIN users u ON i.item_user_fk = u.user_pk
+        WHERE i.item_deleted_at = 0 AND i.item_blocked_at = 0 
+        AND u.user_blocked_at = 0
+        ORDER BY i.item_created_at LIMIT %s OFFSET %s"""
         cursor.execute(q, (extra_item, offset))
         items = cursor.fetchall()
         html = ""
@@ -271,11 +279,14 @@ def login():
         user_password = x.validate_user_password()
         
         db, cursor = x.db()
-        q = "SELECT * FROM users WHERE user_username = %s AND user_deleted_at = 0"
+        q = "SELECT * FROM users WHERE user_username = %s AND user_deleted_at = 0 AND user_blocked_at = 0"
         cursor.execute(q, (user_username,))
         user = cursor.fetchone()
         
         if not user: raise Exception("Invalid credentials")
+
+        if user["user_blocked_at"] != 0:
+            raise Exception("Your account has been blocked by an administrator")
         
         if not check_password_hash(user["user_password"], user_password):
             raise Exception("Invalid credentials")
@@ -943,14 +954,35 @@ def search():
 @app.patch("/block/<user_pk>")
 def block_user(user_pk):
     try:
-        # validate the user_pk
+        # Check if user is admin
+        if ("user" not in session or not session["user"] or 
+            not session["user"].get("user_is_admin", 0) == 1):
+            return "Admin access required", 403
+
         db, cursor = x.db()
+
+        q_user = "SELECT user_name, user_last_name, user_email FROM users WHERE user_pk = %s"
+        cursor.execute(q_user, (user_pk,))
+        user_data = cursor.fetchone()
+        
+        if not user_data:
+            raise Exception("User not found")
+            
+        # Block the user
         q = "UPDATE users SET user_blocked_at = %s WHERE user_pk = %s"
         blocked_at = int(time.time())
         cursor.execute(q, (blocked_at, user_pk))
         db.commit()
+        
+        # Send email notification
+        x.send_user_blocked_email(
+            user_data["user_name"],
+            user_data["user_last_name"],
+            user_data["user_email"]
+        )
+        
         user = {
-            "user_pk":user_pk
+            "user_pk": user_pk
         }
         button_unblock = render_template("_button_unblock_user.html", user=user)
         return f"""
@@ -996,17 +1028,39 @@ def unblock_user(user_pk):
 @app.patch("/block-item/<item_pk>")
 def block_item(item_pk):
     try:
-        # Check if user is admin
         if ("user" not in session or not session["user"] or 
             not session["user"].get("user_is_admin", 0) == 1):
             return "Admin access required", 403
             
         db, cursor = x.db()
-        # Use the proper item_blocked_at field
+        
+        q_item = "SELECT item_name, item_user_fk FROM items WHERE item_pk = %s"
+        cursor.execute(q_item, (item_pk,))
+        item_data = cursor.fetchone()
+        
+        if not item_data or not item_data["item_user_fk"]:
+            # Item not found or no user associated with it
+            pass
+        else:
+            # Get the owner's details for email notification
+            q_user = "SELECT user_name, user_last_name, user_email FROM users WHERE user_pk = %s"
+            cursor.execute(q_user, (item_data["item_user_fk"],))
+            user_data = cursor.fetchone()
+            
+            if user_data:
+                # Send email notification to the item's owner
+                x.send_item_blocked_email(
+                    user_data["user_name"],
+                    user_data["user_last_name"],
+                    item_data["item_name"],
+                    user_data["user_email"]
+                )
+        
         q = "UPDATE items SET item_blocked_at = %s WHERE item_pk = %s"
         blocked_at = int(time.time())
         cursor.execute(q, (blocked_at, item_pk))
         db.commit()
+        
         item = {
             "item_pk": item_pk
         }

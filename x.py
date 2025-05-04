@@ -280,6 +280,26 @@ def send_account_deletion_email(user_name, user_lastname, recipient_email):
     body = "<p>Your profile has been deleted.</p>"
     return send_email_notification(recipient_email, subject, body, user_name, user_lastname)
 
+def send_user_blocked_email(user_name, user_lastname, recipient_email):
+    """Send notification when a user is blocked"""
+    subject = "Your Fleamarket Account Has Been Blocked"
+    body = f"""
+    <p>Hello {user_name} {user_lastname},</p>
+    <p>We regret to inform you that your Fleamarket account has been blocked by an administrator.</p>
+    <p>If you believe this is an error or have questions, please contact our support team.</p>
+    """
+    return send_email_notification(recipient_email, subject, body, user_name, user_lastname)
+
+def send_item_blocked_email(user_name, user_lastname, item_name, recipient_email):
+    """Send notification when a user's fleamarket is blocked"""
+    subject = "Your Fleamarket Listing Has Been Blocked"
+    body = f"""
+    <p>Hello {user_name} {user_lastname},</p>
+    <p>We regret to inform you that your fleamarket listing "{item_name}" has been blocked by an administrator.</p>
+    <p>If you believe this is an error or have questions, please contact our support team.</p>
+    """
+    return send_email_notification(recipient_email, subject, body, user_name, user_lastname)
+
 
 ##############################
 def user_verification_key():

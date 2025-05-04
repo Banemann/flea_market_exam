@@ -17,18 +17,23 @@ mix-title="{{ title | default('Company') }}">
                 {% include "_item_mini.html" %}
             {% endfor %}
         </div>
-        {% include "_button_more_items.html" %}
+        {% if items %}
+            {% include "_button_more_items.html" %}
+        {% endif %}
     </section>
 
     <section id="right">
-        {% set item = items[0] %}
-        {% include "_item.html" %}
+        {% if items %}
+            {% set item = items[0] %}
+            {% include "_item.html" %}
+        {% else %}
+            <div class="no-items-message">
+                <h2>No items available</h2>
+                <p>There are currently no items listed in the marketplace.</p>
+            </div>
+        {% endif %}
     </section>
 
 </main>
 
-
-
-
 {% include "_footer.html" %}
-    
