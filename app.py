@@ -2,6 +2,7 @@ from flask import Flask, render_template, session, request, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_session import Session
 import x
+import languages
 import time
 import uuid
 import os
@@ -153,9 +154,12 @@ def get_items_by_page(page_number):
 
 ##############################
 @app.get("/signup")
-def view_signup():
+@app.get("/signup/<lan>")
+def view_signup(lan="en"):
     try:
-        return render_template("view_signup.html", title="Fleamarket | Signup", x=x)
+        languages_allowed = ["en", "dk"]
+        if lan not in languages_allowed: lan = "en"
+        return render_template("view_signup.html", title="Fleamarket | Signup", x=x, lan=lan, languages=languages)
     except Exception as ex:
         ic(ex)
     finally:
@@ -163,9 +167,12 @@ def view_signup():
 
 
 ##############################
-@app.post("/signup")
-def signup():
+@app.post("/signup/<lan>")
+def signup(lan):
     try:
+        languages_allowed = ["en", "dk"]
+        if lan not in languages_allowed: lan = "en"
+
         user_name = x.validate_user_name()
         user_last_name = x.validate_user_last_name()
         user_username = x.validate_user_username()
@@ -259,12 +266,15 @@ def verify_email(verification_key):
 
 ##############################
 @app.get("/login")
-def view_login():
+@app.get("/login/<lan>")
+def view_login(lan="en"):
     try:
+        languages_allowed = ["en", "dk"]
+        if lan not in languages_allowed: lan = "en"
         active_login = "active"
         error_message = request.args.get("error_message", "")
         message = request.args.get("message", "")
-        return render_template("view_login.html", title="Fleamarket | Login", x=x, active_login=active_login, message=message, error_message=error_message)
+        return render_template("view_login.html", title="Fleamarket | Login", x=x, active_login=active_login, message=message, error_message=error_message, lan=lan, languages=languages)
     except Exception as ex:
         ic(ex)
     finally:
@@ -272,9 +282,11 @@ def view_login():
 
 
 ##############################
-@app.post("/login")
+@app.post("/login/<lan>")
 def login():
     try:
+        languages_allowed = ["en", "dk"]
+        lan = request.args.get("lan", "en")
         user_username = x.validate_user_username()
         user_password = x.validate_user_password()
         

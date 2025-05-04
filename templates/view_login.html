@@ -2,60 +2,59 @@
 {% include "_nav.html" %}
 
 <main id="login" class="page"
-mix-url="/login"
+mix-url="/login/{{ lan }}"
 mix-bottom="body"
 mix-title="{{ title | default('Company') }}"
 mix-hide=".page"
 mix-show="#login">
 
     <header>
-        <h1>Login</h1>
-        <p>Login to your account</p>
+        <h1>{{ languages[lan~"_login"] }}</h1>
+        <p>{{ languages[lan~"_login"] }} {{ languages[lan~"_to_your_account"] }}</p>
     </header>
-
-<div>
-    {% if message %}
-    <div class="success-message">
-        {{ message }}
-    </div>
-    {% endif %}
     
-    {% if error_message %}
-    <div class="error-message">
-        {{ error_message }}
+    <div>
+        {% if message %}
+        <div class="success-message">
+            {{ message }}
+        </div>
+        {% endif %}
+        
+        {% if error_message %}
+        <div class="error-message">
+            {{ error_message }}
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-</div>
 
 
     <form mix-post="/login">    
         <div>
             <label for="">
-                <span>username</span>
-                
+                <span>{{ languages[lan~"_username"] }}</span>
             </label>
             <input name="user_username" type="text" mix-check="{{ x.USER_USERNAME_REGEX }}">
         </div>
         <div>
             <label for="">
-                <span>password</span>
+                <span>{{ languages[lan~"_password"] }}</span>
             </label>
             <input name="user_password" type="password" mix-check="{{ x.USER_PASSWORD_REGEX }}">
         </div>    
             
         <button
-        mix-await="Please wait..."
-        mix-default="Login">
-            Login
+        mix-await="{{ languages[lan~'_please_wait'] }}"
+        mix-default="{{ languages[lan~'_login'] }}">
+            {{ languages[lan~"_login"] }}
         </button>
 
         <button 
         type="button"
         mix-get="/reset-password"
         mix-page
-        mix-await="Please wait..."
-        mix-default="Reset password">
-            Reset password
+        mix-await="{{ languages[lan~'_please_wait'] }}"
+        mix-default="{{ languages[lan~'_reset_password'] }}">
+            {{ languages[lan~"_reset_password"] }}
         </button>
     </form>
 
