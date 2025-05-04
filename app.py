@@ -937,3 +937,148 @@ def search():
     except Exception as ex:
         ic(ex)
         return "x", 400
+
+
+##############################
+@app.patch("/block/<user_pk>")
+def block_user(user_pk):
+    try:
+        # validate the user_pk
+        db, cursor = x.db()
+        q = "UPDATE users SET user_blocked_at = %s WHERE user_pk = %s"
+        blocked_at = int(time.time())
+        cursor.execute(q, (blocked_at, user_pk))
+        db.commit()
+        user = {
+            "user_pk":user_pk
+        }
+        button_unblock = render_template("_button_unblock_user.html", user=user)
+        return f"""
+        <mixhtml mix-replace="#block-{user_pk}">
+            {button_unblock}
+        </mixhtml>
+        """
+    except Exception as ex:
+        ic(ex)
+        return str(ex)
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+@app.patch("/unblock/<user_pk>")
+def unblock_user(user_pk):
+    try:
+        # Connect to the db and unblock the user
+        db, cursor = x.db()
+        q = "UPDATE users SET user_blocked_at = %s WHERE user_pk = %s"  
+        cursor.execute(q, (0, user_pk))
+        db.commit()              
+        user = {
+            "user_pk":user_pk
+        }          
+        button_block = render_template("_button_block_user.html", user=user)
+        return f"""
+        <mixhtml mix-replace="#unblock-{user_pk}">
+            {button_block}
+        </mixhtml>
+        """
+    except Exception as ex:
+        ic(ex)
+        return str(ex)
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+@app.patch("/block-item/<item_pk>")
+def block_item(item_pk):
+    try:
+        # Check if user is admin
+        if ("user" not in session or not session["user"] or 
+            not session["user"].get("user_is_admin", 0) == 1):
+            return "Admin access required", 403
+            
+        db, cursor = x.db()
+        # Use the proper item_blocked_at field
+        q = "UPDATE items SET item_blocked_at = %s WHERE item_pk = %s"
+        blocked_at = int(time.time())
+        cursor.execute(q, (blocked_at, item_pk))
+        db.commit()
+        item = {
+            "item_pk": item_pk
+        }
+        button_unblock = render_template("_button_unblock_item.html", item=item)
+        return f"""
+        <mixhtml mix-replace="#block-item-{item_pk}">
+            {button_unblock}
+        </mixhtml>
+        """
+    except Exception as ex:
+        ic(ex)
+        return str(ex)
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+@app.patch("/unblock-item/<item_pk>")
+def unblock_item(item_pk):
+    try:
+        # Check if user is admin
+        if ("user" not in session or not session["user"] or 
+            not session["user"].get("user_is_admin", 0) == 1):
+            return "Admin access required", 403
+            
+        db, cursor = x.db()
+        # Use the proper item_blocked_at field
+        q = "UPDATE items SET item_blocked_at = %s WHERE item_pk = %s"  
+        cursor.execute(q, (0, item_pk))
+        db.commit()              
+        item = {
+            "item_pk": item_pk
+        }          
+        button_block = render_template("_button_block_item.html", item=item)
+        return f"""
+        <mixhtml mix-replace="#unblock-item-{item_pk}">
+            {button_block}
+        </mixhtml>
+        """
+    except Exception as ex:
+        ic(ex)
+        return str(ex)
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
+@app.get("/admin")
+def view_admin():
+    try:
+        if ("user" not in session or not session["user"] or 
+            not session["user"].get("user_is_admin", 0) == 1):
+            return redirect(url_for("view_login", error_message="Admin access required"))
+            
+        db, cursor = x.db()
+        
+        # Get users
+        q_users = "SELECT * FROM users"
+        cursor.execute(q_users)
+        users = cursor.fetchall()
+        
+        # Get items (fleamarkets)
+        q_items = "SELECT * FROM items"
+        cursor.execute(q_items)
+        items = cursor.fetchall()
+        
+        return render_template("view_admin.html", users=users, items=items)
+    except Exception as ex:
+        ic(ex)
+        return str(ex)
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
