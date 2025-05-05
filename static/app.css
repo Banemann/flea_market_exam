@@ -444,3 +444,23 @@ button{
 .item-row.blocked {
     background-color: #fff0f0;
 }
+
+
+/* Add to your app.css or styles.css */
+.language-selector {
+    display: flex;
+    align-items: center;
+    margin: 0 10px;
+}
+
+.language-selector a {
+    margin: 0 5px;
+    text-decoration: none;
+    padding: 3px 6px;
+    border-radius: 3px;
+}
+
+.language-selector a.active {
+    font-weight: bold;
+    background-color: #f0f0f0;
+}

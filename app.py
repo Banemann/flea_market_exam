@@ -35,10 +35,41 @@ def disable_cache(response):
     return response
 
 
+###############################
+@app.context_processor
+def inject_language():
+    """Make language setting available to all templates"""
+    lan = session.get("language", "en")
+    return dict(lan=lan, languages=languages)
+
+@app.get("/set-language/<language>")
+def set_language(language):
+    try:
+        languages_allowed = ["en", "dk"]
+        if language not in languages_allowed: language = "en"
+        
+        # Store language preference in session
+        session["language"] = language
+        
+        # Return to previous page or homepage
+        referer = request.referrer or "/"
+        
+        return f"""
+        <mixhtml mix-redirect="{referer}">
+        </mixhtml>
+        """
+    except Exception as ex:
+        ic(ex)
+        return redirect(url_for("view_index"))
+
+
 ##############################
 @app.get("/")
 def view_index():
     try:
+        # Get language from session or default
+        lan = session.get("language", "en")
+        
         db, cursor = x.db()
         q = """SELECT i.* FROM items i
         JOIN users u ON i.item_user_fk = u.user_pk
@@ -47,9 +78,10 @@ def view_index():
         ORDER BY i.item_created_at LIMIT 2"""
         cursor.execute(q)
         items = cursor.fetchall()
-        return render_template("view_index.html", title="Fleamarket | Home", items=items)
+        return render_template("view_index.html", title="Fleamarket | Home", items=items, lan=lan, languages=languages)
     except Exception as ex:
         ic(ex)
+        return redirect(url_for("view_login", error_message="System error"))
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
@@ -154,11 +186,9 @@ def get_items_by_page(page_number):
 
 ##############################
 @app.get("/signup")
-@app.get("/signup/<lan>")
-def view_signup(lan="en"):
+def view_signup():
     try:
-        languages_allowed = ["en", "dk"]
-        if lan not in languages_allowed: lan = "en"
+        lan = session.get("language", "en")
         return render_template("view_signup.html", title="Fleamarket | Signup", x=x, lan=lan, languages=languages)
     except Exception as ex:
         ic(ex)
@@ -167,11 +197,10 @@ def view_signup(lan="en"):
 
 
 ##############################
-@app.post("/signup/<lan>")
-def signup(lan):
+@app.post("/signup")
+def signup():
     try:
-        languages_allowed = ["en", "dk"]
-        if lan not in languages_allowed: lan = "en"
+        lan = session.get("language", "en")
 
         user_name = x.validate_user_name()
         user_last_name = x.validate_user_last_name()
@@ -266,11 +295,9 @@ def verify_email(verification_key):
 
 ##############################
 @app.get("/login")
-@app.get("/login/<lan>")
-def view_login(lan="en"):
+def view_login():
     try:
-        languages_allowed = ["en", "dk"]
-        if lan not in languages_allowed: lan = "en"
+        lan = session.get("language", "en")
         active_login = "active"
         error_message = request.args.get("error_message", "")
         message = request.args.get("message", "")
@@ -282,11 +309,10 @@ def view_login(lan="en"):
 
 
 ##############################
-@app.post("/login/<lan>")
+@app.post("/login")
 def login():
     try:
-        languages_allowed = ["en", "dk"]
-        lan = request.args.get("lan", "en")
+        lan = session.get("language", "en")
         user_username = x.validate_user_username()
         user_password = x.validate_user_password()
         
@@ -359,8 +385,10 @@ def view_profile():
         if "user" in session and session["user"]:
             is_session = True
             active_profile = "active"
+            lan = session.get("language", "en")
             return render_template("view_profile.html", title="Fleamarket | Profile", user=session["user"], 
-                                x=x, active_profile=active_profile, is_session=is_session)
+                                x=x, active_profile=active_profile, is_session=is_session, 
+                                lan=lan, languages=languages)
         else:
             return redirect(url_for("view_login"))
     except Exception as ex:
@@ -377,6 +405,7 @@ def view_user_fleamarket():
         if "user" not in session or not session["user"]:
             return redirect(url_for("view_login", error_message="Please login"))
         
+        lan = session.get("language", "en")
         user_pk = session["user"]["user_pk"]
         message = request.args.get("message", "")
         error_message = request.args.get("error_message", "")
@@ -400,6 +429,7 @@ def view_user_fleamarket():
                             additional_images=additional_images,
                             message=message,
                             error_message=error_message,
+                            lan=lan, languages=languages,
                             x=x)
     except Exception as ex:
         ic(ex)
@@ -630,6 +660,7 @@ def view_update_profile():
         if "user" not in session or not session["user"]:
             return redirect(url_for("view_login", error_message="Please login"))
         
+        lan = session.get("language", "en")
         user = session["user"]
         user_pk = user["user_pk"]
         
@@ -639,7 +670,7 @@ def view_update_profile():
         user_data = cursor.fetchone()
         
         return render_template("view_update_profile.html", title="Fleamarket | Update Profile",
-                            user=user_data, x=x)
+                            user=user_data, x=x, lan=lan, languages=languages)
     except Exception as ex:
         ic(ex)
         return redirect(url_for("view_login", error_message="System error"))
@@ -731,10 +762,12 @@ def update_profile():
 @app.get("/reset-password")
 def view_reset_password():
     try:
+        lan = session.get("language", "en")
         message = request.args.get("message", "")
         error_message = request.args.get("error_message", "")
         return render_template("view_reset_password.html", title="Fleamarket | Reset Password",
-                            message=message, error_message=error_message, x=x)
+                            message=message, error_message=error_message, x=x, 
+                            lan=lan, languages=languages)
     except Exception as ex:
         ic(ex)
         return redirect(url_for("view_login", error_message="System error"))
@@ -792,6 +825,7 @@ def reset_password_request():
 @app.get("/reset-password/<reset_key>")
 def view_new_password(reset_key):
     try:
+        lan = session.get("language", "en")
         # Verify the reset key exists and is not expired
         db, cursor = x.db()
         q = "SELECT * FROM users WHERE user_verification_key = %s AND user_deleted_at = 0"
@@ -806,7 +840,8 @@ def view_new_password(reset_key):
         if current_time - user["user_updated_at"] > 3600:
             return redirect(url_for("view_login", error_message="Reset link expired. Please request a new one."))
             
-        return render_template("view_new_password.html", reset_key=reset_key, x=x)
+        return render_template("view_new_password.html", reset_key=reset_key, x=x, 
+                            lan=lan, languages=languages)
         
     except Exception as ex:
         ic(ex)
@@ -1125,6 +1160,7 @@ def unblock_item(item_pk):
 @app.get("/admin")
 def view_admin():
     try:
+        lan = session.get("language", "en")
         if ("user" not in session or not session["user"] or 
             not session["user"].get("user_is_admin", 0) == 1):
             return redirect(url_for("view_login", error_message="Admin access required"))
@@ -1141,7 +1177,8 @@ def view_admin():
         cursor.execute(q_items)
         items = cursor.fetchall()
         
-        return render_template("view_admin.html", users=users, items=items)
+        return render_template("view_admin.html", users=users, items=items, 
+                            lan=lan, languages=languages)
     except Exception as ex:
         ic(ex)
         return str(ex)

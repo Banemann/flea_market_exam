@@ -8,34 +8,32 @@ mix-title="{{ title | default('Company') }}"
 mix-hide=".page"
 mix-show="#profile">
 
-
 {% include "_profile_nav.html" %}
 
-
-<h1>Your Profile</h1>
+<h1>{{ languages[lan~"_your_profile"] }}</h1>
 {% if session.user %}
 <div class="profile-info">
-    <p>Username: {{ session.user.user_username }}</p>
-    <p>Name: {{ session.user.user_name }} {{ session.user.user_last_name }}</p>
-    <p>Email: {{ session.user.user_email }}</p>
+    <p>{{ languages[lan~"_username"] }}: {{ session.user.user_username }}</p>
+    <p>{{ languages[lan~"_name"] }}: {{ session.user.user_name }} {{ session.user.user_last_name }}</p>
+    <p>{{ languages[lan~"_email"] }}: {{ session.user.user_email }}</p>
 </div>
 
 <div>
-    <button id="delete-profile-btn" class="delete-btn">Delete Profile</button>
+    <button id="delete-profile-btn" class="delete-btn">{{ languages[lan~"_delete_profile"] }}</button>
 </div>
 
 <div id="delete-confirm-modal" class="modal hidden">
     <div class="modal-content">
-        <h2>Delete Profile</h2>
-        <p>Please enter your password to confirm.</p>
+        <h2>{{ languages[lan~"_delete_profile"] }}</h2>
+        <p>{{ languages[lan~"_confirm_password_text"] }}</p>
         <form mix-post="/delete-account">
             <div class="form-group">
-                <label for="confirm_password">Password:</label>
+                <label for="confirm_password">{{ languages[lan~"_password"] }}:</label>
                 <input id="confirm_password" name="confirm_password" type="password" required>
             </div>
             <div class="modal-actions">
-                <button type="button" id="cancel-delete-btn">Cancel</button>
-                <button type="submit" mix-await="Deleting..." mix-default="Delete Account">Delete Profile</button>
+                <button type="button" id="cancel-delete-btn">{{ languages[lan~"_cancel"] }}</button>
+                <button type="submit" mix-await="{{ languages[lan~'_deleting'] }}" mix-default="{{ languages[lan~'_delete_profile'] }}">{{ languages[lan~"_delete_profile"] }}</button>
             </div>
             <div class="delete-message-area"></div>
         </form>
@@ -43,7 +41,7 @@ mix-show="#profile">
 </div>
 
 {% else %}
-<p>You are not logged in.</p>
+<p>{{ languages[lan~"_not_logged_in"] }}</p>
 {% endif %}
 </main>
 

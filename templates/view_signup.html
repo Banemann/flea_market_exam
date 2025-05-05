@@ -2,7 +2,7 @@
 {% include "_nav.html" %}
 
 <main id="signup" class="page"
-mix-url="/signup/{{ lan }}"
+mix-url="/signup"
 mix-bottom="body"
 mix-title="{{ title | default('Company') }}"
 mix-hide=".page"
@@ -28,7 +28,7 @@ mix-show="#signup">
         {% endif %}
     </div>
 
-    <form mix-post="/signup/{{ lan }}">
+    <form mix-post="/signup">
         <div>
             <label for="">
                 <span>{{ languages[lan~"_username"] }}</span>

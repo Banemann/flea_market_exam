@@ -127,9 +127,6 @@ dk_user_lastname_rules = f"{x.USER_LAST_NAME_MIN} til {x.USER_LAST_NAME_MAX} teg
 en_username_rules = f"{x.USER_USERNAME_MIN} to {x.USER_USERNAME_MAX} characters"
 dk_username_rules = f"{x.USER_USERNAME_MIN} til {x.USER_USERNAME_MAX} tegn"
 
-en_email_rules = "Valid email format required"
-dk_email_rules = "Gyldig e-mailformat påkrævet"
-
 # Item validation rules
 en_item_name_rules = f"{x.ITEM_NAME_MIN} to {x.ITEM_NAME_MAX} characters"
 dk_item_name_rules = f"{x.ITEM_NAME_MIN} til {x.ITEM_NAME_MAX} tegn"
@@ -174,6 +171,44 @@ dk_item_not_found = "Element ikke fundet"
 en_permission_denied = "Permission denied"
 dk_permission_denied = "Adgang nægtet"
 
+# Navigation
+en_fleamarket = "Fleamarket"
+dk_fleamarket = "Loppemarked"
 
+en_profile = "Profile"
+dk_profile = "Profil"
 
+en_logout = "Logout" 
+dk_logout = "Log ud"
 
+en_login = "Login"
+dk_login = "Log ind"
+
+# No items messages
+en_no_items_available_title = "No items available"
+dk_no_items_available_title = "Ingen varer tilgængelige"
+
+en_no_items_available = "There are currently no items listed in the marketplace."
+dk_no_items_available = "Der er i øjeblikket ingen varer i markedspladsen."
+
+# For update profile page
+en_current_password = "Current Password"
+dk_current_password = "Nuværende adgangskode"
+
+en_required_for_changes = "- Required to make changes"
+dk_required_for_changes = "- Påkrævet for at foretage ændringer"
+
+en_new_password = "New Password"
+dk_new_password = "Ny adgangskode"
+
+en_leave_empty = "- Leave empty to keep current"
+dk_leave_empty = "- Efterlad tom for at beholde nuværende"
+
+en_updating = "Updating..."
+dk_updating = "Opdaterer..."
+
+en_not_logged_in = "You are not logged in."
+dk_not_logged_in = "Du er ikke logget ind."
+
+en_upload_up_to_3 = "Upload up to 3 images"
+dk_upload_up_to_3 = "Upload op til 3 billeder"

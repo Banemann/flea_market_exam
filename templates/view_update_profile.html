@@ -10,60 +10,59 @@ mix-show="#update-profile">
 
 {% include "_profile_nav.html" %}
 
-<h1>Update profile</h1>
+<h1>{{ languages[lan~"_edit_profile"] }}</h1>
 {% if session.user %}
 
 <div class="edit-profile">
     <form mix-post="/update-profile">
         <div>
             <label for="">
-                <span>Username</span>
-                <span>{{ x.USER_USERNAME_MIN }} to {{ x.USER_USERNAME_MAX }} characters</span>
+                <span>{{ languages[lan~"_username"] }}</span>
+                <span>{{ languages[lan~"_username_rules"] }}</span>
             </label>
             <input name="user_username" type="text" value="{{ session.user.user_username }}" mix-check="{{ x.USER_USERNAME_REGEX }}">
         </div> 
         
         <div>
             <label for="">
-                <span>Email</span>
+                <span>{{ languages[lan~"_email"] }}</span>
             </label>
             <input name="user_email" type="text" value="{{ session.user.user_email }}" mix-check="{{ x.USER_EMAIL_REGEX }}">
         </div>
         
         <div>
             <label for="">
-                <span>Current Password (required to make changes)</span>
+                <span>{{ languages[lan~"_current_password"] }}</span>
+                <span>{{ languages[lan~"_required_for_changes"] }}</span>
             </label>
             <input name="current_password" type="password" required>
         </div>
         
         <div>
             <label for="">
-                <span>New Password (leave empty to keep current)</span>
-                <span>{{ x.USER_PASSWORD_MIN }} to {{ x.USER_PASSWORD_MAX }} characters</span>
+                <span>{{ languages[lan~"_new_password"] }}</span>
+                <span>{{ languages[lan~"_leave_empty"] }}</span>
             </label>
             <input name="new_password" type="password">
         </div>
         
         <div>
             <label for="">
-                <span>Confirm New Password</span>
+                <span>{{ languages[lan~"_confirm_password"] }}</span>
             </label>
             <input name="confirm_password" type="password">
         </div>
         
         <button
-        mix-await="Updating..."
-        mix-default="Update Profile">
-            Update Profile
+        mix-await="{{ languages[lan~'_updating'] }}"
+        mix-default="{{ languages[lan~'_update'] }}">
+            {{ languages[lan~"_update"] }}
         </button>
     </form>
 </div>
 
-
-
 {% else %}
-<p>You are not logged in.</p>
+<p>{{ languages[lan~"_not_logged_in"] }}</p>
 {% endif %}
 </main>
 

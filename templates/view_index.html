@@ -28,8 +28,8 @@ mix-title="{{ title | default('Company') }}">
             {% include "_item.html" %}
         {% else %}
             <div class="no-items-message">
-                <h2>No items available</h2>
-                <p>There are currently no items listed in the marketplace.</p>
+                <h2>{{ languages[lan~"_no_items_available_title"] }}</h2>
+                <p>{{ languages[lan~"_no_items_available"] }}</p>
             </div>
         {% endif %}
     </section>

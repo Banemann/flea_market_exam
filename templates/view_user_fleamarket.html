@@ -10,7 +10,7 @@ mix-show="#your-fleamarket">
 
 {% include "_profile_nav.html" %}
 
-<h1>Your fleamarket</h1>
+<h1>{{ languages[lan~"_your_fleamarket"] }}</h1>
 {% if session.user %}
 
 <div class="edit-profile">    
@@ -28,8 +28,6 @@ mix-show="#your-fleamarket">
         {% endif %}
     </div>
 
-
-
 {% if user_fleamarket %}
 <div class="fleamarket-images">
     <div class="main-image">
@@ -37,10 +35,9 @@ mix-show="#your-fleamarket">
     </div>
     
     {% if additional_images %}
-
         <div class="additional-images">
             {% for image in additional_images %}
-                <img src="/static/uploads/{{ image }}" alt="Additional image for {{ user_fleamarket.item_name }}">
+                <img src="/static/uploads/{{ image }}" alt="{{ languages[lan~'_additional_image_for'] }} {{ user_fleamarket.item_name }}">
             {% endfor %}
         </div>
     {% endif %}
@@ -50,126 +47,126 @@ mix-show="#your-fleamarket">
 
     {% if user_fleamarket %}
 
-        <h2>Edit your fleamarket</h2>
+        <h2>{{ languages[lan~"_edit_your_fleamarket"] }}</h2>
         <form mix-post="/your-fleamarket/update" class="fleamarket-form" enctype="multipart/form-data">
             <input type="hidden" name="item_pk" value="{{ user_fleamarket.item_pk }}">
             <div>
                 <label for="">
-                    <span>Fleamarket name</span>
+                    <span>{{ languages[lan~"_fleamarket_name"] }}</span>
                 </label>
                 <input name="item_name" type="text" mix-check="{{ x.ITEM_NAME_REGEX }}" value="{{ user_fleamarket.item_name }}">
             </div> 
     
             <div>
                 <label for="">
-                    <span>Address</span>
+                    <span>{{ languages[lan~"_address"] }}</span>
                 </label>
                 <input name="item_address" type="text" mix-check="{{ x.ITEM_ADDRESS_REGEX }}" value="{{ user_fleamarket.item_address }}">
             </div>
     
             <div>
                 <label for="fleamarket-images">
-                    <span>Images (Upload up to 3 images)</span>
+                    <span>{{ languages[lan~"_images"] }} ({{ languages[lan~"_upload_up_to_3"] }})</span>
                 </label>
                 <input type="file" id="fleamarket-images" name="files" multiple accept="image/png, image/jpeg, image/jpg, image/gif" class="file-input">
                 {% if user_fleamarket.item_image %}
-                    <small>Current main image: {{ user_fleamarket.item_image }}</small>
+                    <small>{{ languages[lan~"_current_main_image"] }}: {{ user_fleamarket.item_image }}</small>
                 {% endif %}
             </div>
     
             <div>
                 <label for="">
-                    <span>Ticket price (DKK)</span>
+                    <span>{{ languages[lan~"_ticket_price"] }} (DKK)</span>
                 </label>
                 <input name="item_price" type="text" mix-check="{{ x.ITEM_PRICE_REGEX }}" value="{{ user_fleamarket.item_price }}">
             </div>
     
             <div>
                 <label for="">
-                    <span>Latitude</span>
+                    <span>{{ languages[lan~"_latitude"] }}</span>
                 </label>
                 <input name="item_latitude" type="text" mix-check="{{ x.ITEM_LATITUDE_REGEX }}" value="{{ user_fleamarket.item_lat }}">
             </div>
     
             <div>
                 <label for="">
-                    <span>Longitude</span>
+                    <span>{{ languages[lan~"_longitude"] }}</span>
                 </label>
                 <input name="item_longitude" type="text" mix-check="{{ x.ITEM_LONGITUDE_REGEX }}" value="{{ user_fleamarket.item_lon }}">
             </div>
             <div class="button-group">
                 <button
                 type="submit"
-                mix-await="Updating..."
-                mix-default="Update">
-                    Update
+                mix-await="{{ languages[lan~'_updating'] }}"
+                mix-default="{{ languages[lan~'_update'] }}">
+                    {{ languages[lan~"_update"] }}
                 </button>
             </div>
         </form>
 
         <form mix-post="/your-fleamarket/delete" style="margin-top: 10px;">
             <input type="hidden" name="item_pk" value="{{ user_fleamarket.item_pk }}">
-            <button type="submit" class="delete-btn" mix-await="Deleting..." mix-default="Delete Fleamarket">
-                Delete Fleamarket
+            <button type="submit" class="delete-btn" mix-await="{{ languages[lan~'_deleting'] }}" mix-default="{{ languages[lan~'_delete_fleamarket'] }}">
+                {{ languages[lan~"_delete_fleamarket"] }}
             </button>
         </form>
 
     {% else %}
         
-        <h2>Register your fleamarket</h2>
+        <h2>{{ languages[lan~"_register_your_fleamarket"] }}</h2>
         <form mix-post="/your-fleamarket" enctype="multipart/form-data">
             <div>
                 <label for="">
-                    <span>Fleamarket name</span>
+                    <span>{{ languages[lan~"_fleamarket_name"] }}</span>
                 </label>
                 <input name="item_name" type="text" mix-check="{{ x.ITEM_NAME_REGEX }}">
             </div> 
     
             <div>
                 <label for="">
-                    <span>Address</span>
+                    <span>{{ languages[lan~"_address"] }}</span>
                 </label>
                 <input name="item_address" type="text" mix-check="{{ x.ITEM_ADDRESS_REGEX }}">
             </div>
     
             <div>
                 <label for="new-fleamarket-images">
-                    <span>Images (Upload up to 3 images)</span>
+                    <span>{{ languages[lan~"_images"] }} ({{ languages[lan~"_upload_up_to_3"] }})</span>
                 </label>
                 <input type="file" id="new-fleamarket-images" name="files" multiple accept="image/png, image/jpeg, image/jpg, image/gif" class="file-input">
             </div>
     
             <div>
                 <label for="">
-                    <span>Ticket price (DKK)</span>
+                    <span>{{ languages[lan~"_ticket_price"] }} (DKK)</span>
                 </label>
                 <input name="item_price" type="text" mix-check="{{ x.ITEM_PRICE_REGEX }}">
             </div>
     
             <div>
                 <label for="">
-                    <span>Latitude</span>
+                    <span>{{ languages[lan~"_latitude"] }}</span>
                 </label>
                 <input name="item_latitude" type="text" mix-check="{{ x.ITEM_LATITUDE_REGEX }}">
             </div>
     
             <div>
                 <label for="">
-                    <span>Longitude</span>
+                    <span>{{ languages[lan~"_longitude"] }}</span>
                 </label>
                 <input name="item_longitude" type="text" mix-check="{{ x.ITEM_LONGITUDE_REGEX }}">
             </div>
             <button
-            mix-await="Please wait..."
-            mix-default="Add">
-                Add
+            mix-await="{{ languages[lan~'_please_wait'] }}"
+            mix-default="{{ languages[lan~'_add'] }}">
+                {{ languages[lan~"_add"] }}
             </button>
         </form>
     {% endif %}
 </div>
 
 {% else %}
-<p>You are not logged in.</p>
+<p>{{ languages[lan~"_not_logged_in"] }}</p>
 {% endif %}
 </main>
 
