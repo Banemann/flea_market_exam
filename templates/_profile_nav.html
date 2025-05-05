@@ -1,8 +1,8 @@
 <nav>
     {% if "user" in session and session["user"] %}
     <ul>
-        <li><a href="/update-profile" mix-get="/update-profile" mix-page>Update profile</a></li>
-        <li><a href="/your-fleamarket" mix-get="/your-fleamarket" mix-page>Your fleamarket</a></li>
+        <li><a href="/update-profile" mix-get="/update-profile" mix-page {% if request.path == '/update-profile' %}class="active"{% endif %}>{{ languages[lan~"_update_profile"] }}</a></li>
+        <li><a href="/your-fleamarket" mix-get="/your-fleamarket" mix-page {% if request.path == '/your-fleamarket' %}class="active"{% endif %}>{{ languages[lan~"_your_fleamarket"] }}</a></li>
     </ul>
     {% endif %}
 </nav>

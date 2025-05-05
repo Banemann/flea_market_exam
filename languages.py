@@ -48,6 +48,9 @@ dk_delete_profile = "Slet profil"
 en_your_fleamarket = "Your Fleamarket"
 dk_your_fleamarket = "Dit loppemarked"
 
+en_update_profile = "Update Profile"
+dk_update_profile = "Opdater profil"
+
 en_add = "Add"
 dk_add = "Tilføj"
 
