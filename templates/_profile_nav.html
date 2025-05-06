@@ -1,4 +1,4 @@
-<nav>
+<nav class="profile_nav">
     {% if "user" in session and session["user"] %}
     <ul>
         <li><a href="/update-profile" mix-get="/update-profile" mix-page {% if request.path == '/update-profile' %}class="active"{% endif %}>{{ languages[lan~"_update_profile"] }}</a></li>

@@ -29,7 +29,7 @@
     {% if not standalone|default(false) %}
     <div class="item-actions">
         <a href="/items/{{ item.item_pk }}" target="_blank" class="button">
-            Open in window
+            {{ languages[lan~"_open_window"] }}
         </a>
     </div>
     {% endif %}

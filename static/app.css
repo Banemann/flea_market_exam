@@ -1,719 +1,1200 @@
 /* =======================================
-   TABLE OF CONTENTS
-   =======================================
-   1. Reset & Base Styles
-   2. Layout
-   3. Navigation
-   4. Maps
-   5. Item Cards & Listings
-   6. Modal & Dialogs
-   7. Messages & Notifications
-   8. Admin Page Styles
-   9. Fleamarket Images
-   10. Utilities & Helpers
-   11. Animations
-   ======================================= */
-
-/* =======================================
-   1. RESET & BASE STYLES
-   ======================================= */
-   * {
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box;
+  1. RESET & BASE STYLES
+======================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    width: 100%;
-    height: 100vh;
-    overflow-x: hidden;
+  width: 100%;
+  height: 100vh;
+  overflow-x: hidden;
 }
 
-input, button {
-    width: 100%;
-    height: 3rem;
-    outline: none;
-    border: none;
+input,
+button {
+  width: 100%;
+  height: 3rem;
+  outline: none;
+  border: none;
 }
 
 input {
-    border: 1px solid rgb(100,100,100);
+  border: 1px solid rgb(100, 100, 100);
 }
 
 button {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 form {
-    width: 50%;
+  width: 50%;
 }
 
 form input {
-    width: 100%;
-    height: 2.5rem;
-    outline: none;
+  width: 100%;
+  height: 2.5rem;
+  outline: none;
 }
 
 form button {
-    width: 100%;
-    height: 2.5rem;
-    outline: none;
-    cursor: pointer;
+  width: 100%;
+  height: 2.5rem;
+  outline: none;
+  cursor: pointer;
 }
 
 /* =======================================
-   2. LAYOUT
-   ======================================= */
+  2. LAYOUT
+======================================= */
 .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 main {
-    display: grid;
-    grid-template-columns: 8fr 10fr 8fr;
-    gap: 1rem;
-    height: calc(100% - 4rem);
+  display: grid;
+  grid-template-columns: 8fr 10fr 8fr;
+  gap: 1rem;
+  height: calc(100% - 4rem);
 }
 
 /* =======================================
-   3. NAVIGATION
-   ======================================= */
-   :root {
-    --nav-height: 4rem;
-    --nav-padding: 1rem;
-    --border-radius-sm: 5px;
-    --border-radius-md: 10px;
-    --color-primary: #3498db;
-    --color-light: #f8f9fa;
-    --color-dark: #212529;
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --transition: all 0.3s ease;
-  }
-  
+  3. NAVIGATION
+======================================= */
+:root {
+  --nav-height: 4rem;
+  --nav-padding: 1rem;
+  --border-radius-sm: 5px;
+  --border-radius-md: 10px;
+  --color-primary: #3498db;
+  --color-light: #f8f9fa;
+  --color-dark: #212529;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: var(--nav-height);
+  padding: 0 var(--nav-padding);
+
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 999999999999;
+}
+
+nav.nav {
+  background-color: white;
+}
+
+nav > a:first-child {
+  color: var(--color-dark);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  padding-right: var(--nav-padding);
+}
+
+#search_container {
+  position: relative;
+  flex-grow: 1;
+  max-width: 600px;
+  margin: 0 1rem;
+}
+
+#search_container input {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 1rem;
+  border-radius: var(--border-radius-md);
+  border: 1px solid #ddd;
+  transition: var(--transition);
+}
+
+#search_container input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+#search_results {
+  position: absolute;
+  top: calc(2.5rem + 5px);
+  left: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: white;
+  border-radius: var(--border-radius-sm);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+#search_results div {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+  transition: var(--transition);
+}
+
+#search_results div:hover {
+  background-color: var(--color-light);
+}
+
+#search_results div:last-child {
+  border-bottom: none;
+}
+
+#search_results div img {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-right: 1rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.language-selector {
+  display: flex;
+  align-items: center;
+  margin: 0 1rem;
+}
+
+.language-selector a {
+  color: var(--color-dark);
+  text-decoration: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition);
+}
+
+.language-selector a:hover {
+  background-color: #f0f0f0;
+}
+
+.language-selector a.active {
+  font-weight: bold;
+  background-color: var(--color-light);
+  color: var(--color-primary);
+}
+
+.util_nav {
+  display: flex;
+  align-items: center;
+}
+
+.util_nav a {
+  color: var(--color-dark);
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 1.5rem;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: var(--transition);
+}
+
+.util_nav a:hover {
+  color: var(--color-primary);
+}
+
+.util_nav a:hover::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
   nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: var(--nav-height);
-    padding: 0 var(--nav-padding);
-    background-color: white;
-    box-shadow: var(--shadow-sm);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    flex-wrap: wrap;
+    height: auto;
+    padding: 1rem;
   }
-  
+
   nav > a:first-child {
-    color: var(--color-dark);
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.2rem;
-    flex-shrink: 0;
-    padding-right: var(--nav-padding);
+    width: 100%;
+    margin-bottom: 0.5rem;
+    text-align: center;
   }
-  
+
   #search_container {
-    position: relative;
-    flex-grow: 1;
-    max-width: 600px;
+    order: 3;
+    width: 100%;
+    max-width: none;
+    margin: 0.5rem 0;
+  }
+
+  .language-selector {
+    order: 2;
+    margin: 0;
+  }
+
+  .util_nav {
+    order: 1;
+    width: 100%;
+    justify-content: center;
+    margin: 0.5rem 0;
+  }
+
+  .util_nav a {
     margin: 0 1rem;
   }
-  
-  #search_container input {
-    width: 100%;
-    height: 2.5rem;
-    padding: 0 1rem;
-    border-radius: var(--border-radius-md);
-    border: 1px solid #ddd;
-    transition: var(--transition);
+}
+
+@media (max-width: 576px) {
+  .mobile-menu-button {
+    display: block;
   }
-  
-  #search_container input:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+
+  .nav-items {
+    display: none;
   }
-  
-  #search_results {
-    position: absolute;
-    top: calc(2.5rem + 5px);
-    left: 0;
-    z-index: 50;
+
+  .nav-items.active {
     display: flex;
     flex-direction: column;
     width: 100%;
-    background: white;
-    border-radius: var(--border-radius-sm);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-height: 300px;
-    overflow-y: auto;
   }
-  
-  #search_results div {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem;
-    border-bottom: 1px solid #eee;
-    transition: var(--transition);
-  }
-  
-  #search_results div:hover {
-    background-color: var(--color-light);
-  }
-  
-  #search_results div:last-child {
-    border-bottom: none;
-  }
-  
-  #search_results div img {
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-right: 1rem;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  
-  .language-selector {
-    display: flex;
-    align-items: center;
-    margin: 0 1rem;
-  }
-  
-  .language-selector a {
-    color: var(--color-dark);
-    text-decoration: none;
-    padding: 0.3rem 0.6rem;
-    border-radius: var(--border-radius-sm);
-    transition: var(--transition);
-  }
-  
-  .language-selector a:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .language-selector a.active {
-    font-weight: bold;
-    background-color: var(--color-light);
-    color: var(--color-primary);
-  }
-  
-  .util_nav {
-    display: flex;
-    align-items: center;
-  }
-  
-  .util_nav a {
-    color: var(--color-dark);
-    text-decoration: none;
-    font-weight: 500;
-    margin-left: 1.5rem;
-    padding: 0.5rem 0;
-    position: relative;
-    transition: var(--transition);
-  }
-  
-  .util_nav a:hover {
-    color: var(--color-primary);
-  }
-  
-  .util_nav a:hover::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: var(--color-primary);
-  }
-  
-  @media (max-width: 768px) {
-    nav {
-      flex-wrap: wrap;
-      height: auto;
-      padding: 1rem;
-    }
-    
-    nav > a:first-child {
-      width: 100%;
-      margin-bottom: 0.5rem;
-      text-align: center;
-    }
-    
-    #search_container {
-      order: 3;
-      width: 100%;
-      max-width: none;
-      margin: 0.5rem 0;
-    }
-    
-    .language-selector {
-      order: 2;
-      margin: 0;
-    }
-    
-    .util_nav {
-      order: 1;
-      width: 100%;
-      justify-content: center;
-      margin: 0.5rem 0;
-    }
-    
-    .util_nav a {
-      margin: 0 1rem;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .mobile-menu-button {
-      display: block;
-    }
-    
-    .nav-items {
-      display: none;
-    }
-    
-    .nav-items.active {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-    }
-  }
-
-/* Profile Navigation Styles */
-.page nav:not(body > nav) {
-    margin-bottom: 2rem;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 1rem;
-  }
-  
-  .page nav ul {
-    display: flex;
-    list-style: none;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-  
-  .page nav li {
-    position: relative;
-  }
-  
-  .page nav li a {
-    color: var(--color-dark);
-    text-decoration: none;
-    font-weight: 500;
-    padding: 0.5rem 0;
-    position: relative;
-    transition: var(--transition);
-    white-space: nowrap;
-  }
-  
-  .page nav li a:hover {
-    color: var(--color-primary);
-  }
-  
-  .page nav li a::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--color-primary);
-    transition: var(--transition);
-  }
-  
-  .page nav li a:hover::after {
-    width: 100%;
-  }
-  
-  .page nav li a.active {
-    color: var(--color-primary);
-  }
-  
-  .page nav li a.active::after {
-    width: 100%;
-  }
-  
-  @media (max-width: 576px) {
-    .page nav ul {
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-    
-    .page nav li {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    
-    .page nav li:last-child {
-      border-bottom: none;
-    }
-  }
+}
 
 /* =======================================
-   4. MAPS
-   ======================================= */
+  4. MAPS
+======================================= */
 #map {
-    height: 100%;
+  height: 100%;
 }
 
 .custom-marker {
-    width: 50px;
-    height: 50px;
-    background-color: purple;
-    border-radius: 50%;
-    text-align: center;
-    line-height: 50px;
-    color: white;
-    font-size: 1rem;
-    font-weight: bold;
+  width: 50px;
+  height: 50px;
+  background-color: purple;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 50px;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 /* =======================================
-   5. ITEM CARDS & LISTINGS
-   ======================================= */
+  5. INDEX - ITEM CARDS & LISTINGS
+======================================= */
 #items_more {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 #items {
-    display: grid;
-    grid-template-columns: 10fr 10fr;
-    gap: 0.5rem;
-    width: 100%;
+  display: grid;
+  grid-template-columns: 10fr 10fr;
+  gap: 0.5rem;
+  width: 100%;
 }
 
 #items .item {
-    padding: 0.2rem;
-    border: 1px solid rgba(0,0,0,0.1);
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);            
-    width: 100%;
-    text-decoration: none;
+  padding: 0.2rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  text-decoration: none;
 }
 
 #items .item * {
-    pointer-events: none;
-    color: black;
+  pointer-events: none;
+  color: black;
 }
 
-#items .item p {                
-    font-size: 1.3rem;
+#items .item p {
+  font-size: 1.3rem;
 }
 
 #items .item div {
-    margin-top: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 #items .item img {
-    width: 100%;
-    height: 6rem;
-    object-fit: cover;
-    border-radius: 5px;
+  width: 100%;
+  height: 6rem;
+  object-fit: cover;
+  border-radius: 5px;
 }
 
 #button_more_items {
-    width: 50%;
-    margin: auto;
-    background-color: black;
-    color: white;
-    margin-top: 1rem;
-    border-radius: 10px;
-    cursor: pointer;
+  width: 50%;
+  margin: auto;
+  background-color: black;
+  color: white;
+  margin-top: 1rem;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 /* Single item view */
 #right #item p {
-    font-size: 1.3rem;
-} 
+  font-size: 1.3rem;
+}
 
 #right #item div {
-    margin-top: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 #right #item img {
+  width: 100%;
+}
+
+@media (max-width: 1500px) {
+  #items {
+    grid-template-columns: 1fr;
+  }
+
+  #items .item {
     width: 100%;
+  }
+
+  #index {
+    grid-template-columns: 10fr 10fr 10fr;
+  }
+}
+
+@media (max-width: 1100px) {
+  #map{
+    display: none;
+  }
+
+  #index{
+    grid-template-columns: 10fr 10fr;
+  }
+}
+
+@media (max-width: 600px) {
+  #index {
+    grid-template-columns: 1fr;
+    margin: 1rem;
+    display: grid;
+    grid-template-areas: 
+      "right"
+      "items";
+  }
+  
+  #right {
+    grid-area: right;
+    margin-bottom: 1.5rem;
+  }
+  
+  #items_more {
+    grid-area: items;
+  }
+
+  #item{
+    .main-image {
+      img{
+        height: 20vh !important;
+      }
+  }
+
+  
 }
 
 /* =======================================
-   6. MODALS & DIALOGS
-   ======================================= */
+  6. MODALS & DIALOGS
+======================================= */
 .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
 .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 4px;
-    max-width: 400px;
-    width: 100%;
+  background: white;
+  padding: 20px;
+  border-radius: 4px;
+  max-width: 400px;
+  width: 100%;
 }
 
 .modal-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
 .delete-btn {
-    background-color: #ff4d4d;
-    color: white;
+  background-color: #ff4d4d;
+  color: white;
 }
 
 .button-group {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin-top: 20px;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 1rem;
 }
 
 /* =======================================
-   7. MESSAGES & NOTIFICATIONS
-   ======================================= */
+  7. MESSAGES & NOTIFICATIONS
+======================================= */
 #toast_container {
-    position: fixed;
-    top: 1rem;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    pointer-events: none;
-    z-index: 10;
+  position: fixed;
+  top: 1rem;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: none;
+  z-index: 10;
 }
 
 .toast {
-    margin: auto;
-    padding: 1rem 3rem;
-    color: white;
+  margin: auto;
+  padding: 1rem 3rem;
+  color: white;
 }
 
 .ok {
-    background: green;
+  background: green;
 }
 
 .error {
-    background: red;
+  background: red;
 }
 
 .success-message {
-    background-color: #d4edda;
-    color: #155724;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 15px;
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
 }
 
 .error-message {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 15px;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
 }
 
 .message-container {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
-#mix-cover {    
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 0.3rem;
-    background-color: rgb(6, 182, 212);
-    z-index: 20;
+#mix-cover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 0.3rem;
+  background-color: rgb(6, 182, 212);
+  z-index: 20;
 }
 
 .mix-error {
-    background-color: rgba(230,130,130, 0.5);
+  background-color: rgba(230, 130, 130, 0.5);
 }
 
 /* =======================================
-   8. ADMIN PAGE STYLES
-   ======================================= */
+  8. ADMIN PAGE STYLES
+======================================= */
 #admin {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 #admin h1 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .users-table {
-    width: 100%;
-    overflow-x: auto;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .users-table table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.users-table th, 
+.users-table th,
 .users-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
 .users-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+  background-color: #f2f2f2;
+  font-weight: bold;
 }
 
 .user-row.blocked {
-    background-color: #fff0f0;
+  background-color: #fff0f0;
 }
 
 .block-btn {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .unblock-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .items-table {
-    width: 100%;
-    overflow-x: auto;
-    margin-top: 30px;
-    margin-bottom: 30px;
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .items-table table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.items-table th, 
+.items-table th,
 .items-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
 .item-row.blocked {
-    background-color: #fff0f0;
+  background-color: #fff0f0;
 }
 
 .admin-item-image {
-    width: 80px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 4px;
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 /* =======================================
-   9. FLEAMARKET IMAGES
-   ======================================= */
+  9. FLEAMARKET IMAGES
+======================================= */
 .fleamarket-images {
-    margin: 20px 0;
+  margin: 20px 0;
 }
 
 .main-image img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin-bottom: 10px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 10px;
 }
 
 .additional-images {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .additional-images img {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
 }
 
 .file-input {
-    border: 1px solid #ccc;
-    display: inline-block;
-    padding: 6px 12px;
-    cursor: pointer;
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
 }
 
 /* Item-specific image styles */
 #item .fleamarket-images {
-    margin: 0 0 20px 0;
+  margin: 0 0 20px 0;
 }
 
 #item .main-image img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin-bottom: 15px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 15px;
 }
 
 #item .additional-images {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 #item .additional-images img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border: 2px solid #ddd;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 2px solid #ddd;
 }
 
 /* =======================================
-   10. UTILITIES & HELPERS
-   ======================================= */
+  10. UTILITIES & HELPERS
+======================================= */
 .hidden {
-    display: none !important;
+  display: none !important;
 }
 
 .mix-hidden {
-    display: none !important;
+  display: none !important;
 }
 
 .ml {
-    margin-left: auto;
+  margin-left: auto;
 }
 
 /* =======================================
-   11. ANIMATIONS
-   ======================================= */
+  11. ANIMATIONS
+======================================= */
 .mix-fade-out {
-    animation: fadeOut 2s cubic-bezier(0.1, 0, 0.5, 1);
+  animation: fadeOut 2s cubic-bezier(0.1, 0, 0.5, 1);
 }
 
 @keyframes mix-fade-out {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* =======================================
+  12. PROFILE PAGE
+======================================= */
+
+/* Profile container */
+#profile {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+#profile h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-dark);
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 0.5rem;
+}
+
+/* Profile information section */
+.profile-info {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.profile-info p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile-info p:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.profile-info p strong {
+  font-weight: 600;
+  color: var(--color-dark);
+}
+
+/* Delete button container */
+#profile > div:not(.profile-info):not(.modal) {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Delete button styling */
+#delete-profile-btn {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  max-width: 200px;
+  transition: background-color 0.2s;
+}
+
+#delete-profile-btn:hover {
+  background-color: #ff3333;
+}
+
+/* Modal improvements */
+#delete-confirm-modal .modal-content {
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+#delete-confirm-modal h2 {
+  color: #ff4d4d;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+#delete-confirm-modal p {
+  margin-bottom: 1.5rem;
+  color: var(--color-dark);
+}
+
+#delete-confirm-modal .form-group {
+  margin-bottom: 1.5rem;
+}
+
+#delete-confirm-modal .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+#delete-confirm-modal .modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+#delete-confirm-modal button[type="button"] {
+  background-color: #f2f2f2;
+  color: var(--color-dark);
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#delete-confirm-modal button[type="submit"] {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#delete-confirm-modal button[type="button"]:hover {
+  background-color: #e6e6e6;
+}
+
+#delete-confirm-modal button[type="submit"]:hover {
+  background-color: #ff3333;
+}
+
+.delete-message-area {
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .profile-info {
+    padding: 1.5rem;
+  }
+
+  .profile-info p {
+    flex-direction: column;
+  }
+
+  #delete-confirm-modal .modal-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* =======================================
+  13. UPDATE PROFILE PAGE
+======================================= */
+#update-profile {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+#update-profile h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-dark);
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 0.5rem;
+}
+
+.edit-profile {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.edit-profile form > div {
+  margin-bottom: 1.5rem;
+}
+
+.edit-profile label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.edit-profile label span:first-child {
+  font-weight: 600;
+  color: var(--color-dark);
+  margin-bottom: 0.3rem;
+}
+
+.edit-profile label span:nth-child(2) {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.edit-profile input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  height: auto;
+  font-size: 1rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.edit-profile input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.edit-profile button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  height: auto;
+  margin-top: 1rem;
+  transition: background-color 0.2s;
+}
+
+.edit-profile button:hover {
+  background-color: #2980b9;
+}
+
+.success-message,
+.error-message {
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .edit-profile {
+    padding: 1.5rem;
+  }
+
+  form {
+    width: 100%;
+  }
+}
+
+/* =======================================
+  14. YOUR FLEAMARKET PAGE
+======================================= */
+#your-fleamarket {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+#your-fleamarket h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-dark);
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 0.5rem;
+}
+
+#your-fleamarket h2 {
+  font-size: 1.5rem;
+  margin: 1.5rem 0;
+  color: var(--color-dark);
+}
+
+.fleamarket-form {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.fleamarket-form div {
+  margin-bottom: 1.5rem;
+}
+
+.fleamarket-form label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.fleamarket-form label span:first-child {
+  font-weight: 600;
+  color: var(--color-dark);
+  margin-bottom: 0.3rem;
+}
+
+.fleamarket-form input:not([type="file"]) {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  height: auto;
+  font-size: 1rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.fleamarket-form input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.fleamarket-form button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  height: auto;
+  transition: background-color 0.2s;
+}
+
+.fleamarket-form button:hover {
+  background-color: #2980b9;
+}
+
+/* Improved file input styling */
+.file-input {
+  padding: 0;
+  border: none;
+  height: auto;
+}
+
+.fleamarket-images {
+  margin-bottom: 2rem;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.main-image img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.additional-images {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.additional-images img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.additional-images img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Delete form styling */
+#your-fleamarket form[mix-post="/your-fleamarket/delete"] {
+  width: 100%;
+}
+
+#your-fleamarket .delete-btn {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  height: auto;
+  transition: background-color 0.2s;
+}
+
+#your-fleamarket .delete-btn:hover {
+  background-color: #ff3333;
+}
+
+/* Small image name display */
+.fleamarket-form small {
+  display: block;
+  margin-top: 0.5rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #your-fleamarket {
+    padding: 1rem;
+  }
+
+  .fleamarket-form,
+  .fleamarket-images {
+    padding: 1rem;
+  }
+
+  .additional-images img {
+    width: 100px;
+    height: 100px;
+  }
+
+  form {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .additional-images img {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* =======================================
+  15. PROFILE NAVIGATION
+   ======================================= */
+.profile_nav {
+  margin-bottom: 1.5rem;
+  width: 100%;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  z-index: 99;
+}
+
+.profile_nav nav {
+  width: 100%;
+  height: auto !important;
+  min-height: 50px;
+  padding: 10px 0;
+  box-shadow: none;
+  position: relative;
+  background: transparent;
+}
+
+.profile_nav ul {
+  display: flex;
+  list-style: none;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.profile_nav li {
+  position: relative;
+  white-space: nowrap;
+  margin: 0;
+  padding: 0;
+}
+
+.profile_nav a {
+  color: var(--color-dark);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: var(--transition);
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.profile_nav a:hover {
+  color: var(--color-primary);
+}
+
+.profile_nav a::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-primary);
+  transition: var(--transition);
+}
+
+.profile_nav a:hover::after {
+  width: 100%;
+}
+
+.profile_nav a.active {
+  color: var(--color-primary);
+}
+
+.profile_nav a.active::after {
+  width: 100%;
 }

@@ -45,6 +45,9 @@ dk_update = "Opdater"
 en_delete_profile = "Delete Profile"
 dk_delete_profile = "Slet profil"
 
+en_cancel = "Cancel"
+dk_cancel = "Annuller"
+
 en_your_fleamarket = "Your Fleamarket"
 dk_your_fleamarket = "Dit loppemarked"
 
@@ -215,3 +218,6 @@ dk_not_logged_in = "Du er ikke logget ind."
 
 en_upload_up_to_3 = "Upload up to 3 images"
 dk_upload_up_to_3 = "Upload op til 3 billeder"
+
+en_open_window = "Open in window"
+dk_open_window = "Åbn i vindue"
