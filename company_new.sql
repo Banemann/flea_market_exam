@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: May 04, 2025 at 05:52 PM
+-- Generation Time: May 07, 2025 at 09:55 AM
 -- Server version: 9.3.0
 -- PHP Version: 8.2.27
 
@@ -51,19 +51,18 @@ CREATE TABLE `items` (
   `item_lat` varchar(50) NOT NULL,
   `item_created_at` bigint UNSIGNED NOT NULL,
   `item_updated_at` bigint UNSIGNED NOT NULL,
-  `item_deleted_at` bigint UNSIGNED NOT NULL
+  `item_deleted_at` bigint UNSIGNED NOT NULL,
+  `item_blocked_at` bigint UNSIGNED NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `items`
 --
 
-INSERT INTO `items` (`item_pk`, `item_user_fk`, `item_name`, `item_address`, `item_image`, `item_price`, `item_lon`, `item_lat`, `item_created_at`, `item_updated_at`, `item_deleted_at`) VALUES
-('193e055791ed4fa5a6f24d0ea7422a89', NULL, 'Tivoli Gardens', '1111', '2.jpg', 220, '12.5673', '55.6731', 2, 0, 0),
-('56f9d2171b2646f7a077a6ee4a0ce3c9', NULL, 'The Little Mermaid Statue', '112222', '3.jpg', 50, '12.6030', '55.6910', 3, 0, 0),
-('b8f0c4a9fa0d4d1c8c38a1d8986e9c7d', NULL, 'Nyhavn (Harbor)', '22323', '1.jpg', 100, '12.5903', '55.6763', 1, 0, 0),
-('cf9e4a6d71ea45cba17078df4d7b2516', NULL, 'Rosenborg Castle', '3333', '5.jpg', 500, '12.5844', '55.6838', 5, 0, 0),
-('f08b6d7c45ff46a0a95cd13b56ab5676', NULL, 'Amalienborg Palace', '444444', '4.jpg', 200, '12.5917', '55.6759', 4, 0, 0);
+INSERT INTO `items` (`item_pk`, `item_user_fk`, `item_name`, `item_address`, `item_image`, `item_price`, `item_lon`, `item_lat`, `item_created_at`, `item_updated_at`, `item_deleted_at`, `item_blocked_at`) VALUES
+('53c3db7120bd4be0bfad62c185237014', 'f490d2b887914af78d22f21907177912', 'Nørrebro Flea', 'Nørregade 51', '4be2ae7115cc44fea01b17f084e9fb6f.jpg', 90, '80.86452', '14.63822', 1746385792, 0, 0, 0),
+('94b884e783204fa7ab3b6c5acee74ea2', 'af12f713a8ff4b079b9564dfad0cc6d7', 'Caspers shop', 'Richard Mortensens Vej 1', '8ca016bee0854caeb5f1d509b2411495.jpg', 50, '90.86452', '24.63822', 1746390535, 0, 0, 0),
+('bb7491ac6c2046c39e8b495ac399df3d', 'af12f713a8ff4b079b9564dfad0cc6d7', 'Caspers shop12', 'Richard Mortensens Vej 15', '8f9c4be9c86b4aebbe6be34eab79ece9.jpg', 50, '90.86452', '24.63822', 1746447001, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -92,13 +91,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_pk`, `user_username`, `user_name`, `user_last_name`, `user_email`, `user_password`, `user_verification_key`, `user_verified_at`, `user_created_at`, `user_updated_at`, `user_blocked_at`, `user_deleted_at`, `user_is_admin`) VALUES
-('2e561df506cb460b927438f9070ff3f1', '111', 'dd', '', 'd@d.com', '', NULL, 0, 0, 0, 0, 0, 0),
-('3d7ff97dce6a4a01b21b53a5b3067d6d', '222', 'cc', '', 'c@c.com', '', NULL, 0, 0, 0, 0, 0, 0),
-('47c9425d30b84789b789d1ae69fe7ab3', '333', 'ee', '', 'e@e.com', '', NULL, 0, 0, 0, 0, 0, 0),
-('6c99c026fb2847e2ba0a67ec1d747f4b', 'admin', 'admin', 'admin', 'casperbanemann@gmail.com', 'scrypt:32768:8:1$X9CnDA61WqTCXIJl$35da40c4084ffeae93c5544a316d7fe99b6ebca25a821060df284f754ae9a144e0b30101cb8654712313d441b5d3ccfb9f6560606be687d1eea5705ffcaefc18', NULL, 1746381070, 1746381055, 0, 0, 0, 1),
-('9e5a4d736dce48cc9ed9b307c5a9756b', 'Emil', 'Emil', 'Emil', 'emil@emil.com', 'scrypt:32768:8:1$R2X5dLw7Bv8702oV$bb4df70854ef6364128b39ebc42db047c6bf5991fe1071987b8ce691682760eb0f74fce716ad9a6012471a715c2b346415642c9e3d94aeb6b53d373229155bd2', '673f77af03b842a895c64dd2451f1a4b', 0, 1745928555, 0, 0, 0, 0),
-('af12f713a8ff4b079b9564dfad0cc6d7', '444', 'ff', '', 'f@f.com', '', NULL, 0, 0, 0, 0, 0, 0),
-('b6e4a3f3192d46fcb2b7c927576e6f77', '555', 'bb', '', 'b@b.com', '', NULL, 0, 0, 0, 0, 0, 0);
+('af12f713a8ff4b079b9564dfad0cc6d7', 'admin', 'admin', 'admin', 'admin', 'scrypt:32768:8:1$X9CnDA61WqTCXIJl$35da40c4084ffeae93c5544a316d7fe99b6ebca25a821060df284f754ae9a144e0b30101cb8654712313d441b5d3ccfb9f6560606be687d1eea5705ffcaefc18', NULL, 1746381070, 1746381055, 0, 0, 0, 1),
+('f490d2b887914af78d22f21907177912', 'casp2783', 'Casper', 'Banemann', 'anqlzxx@gmail.com', 'scrypt:32768:8:1$QOICi6l4SMuHgGdR$6ce75bef777b0d5e68f82bd135f616b013624977fcaac06da75a7f153eea6ffbf198d19d4ae62357a54f29592ff4610a93a62b520fd447945e00856b11c3098f', NULL, 1746385721, 1746385687, 0, 0, 0, 0);
 
 --
 -- Indexes for dumped tables
