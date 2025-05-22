@@ -181,15 +181,6 @@ dk_permission_denied = "Adgang nægtet"
 en_fleamarket = "Fleamarket"
 dk_fleamarket = "Loppemarked"
 
-en_profile = "Profile"
-dk_profile = "Profil"
-
-en_logout = "Logout" 
-dk_logout = "Log ud"
-
-en_login = "Login"
-dk_login = "Log ind"
-
 # No items messages
 en_no_items_available_title = "No items available"
 dk_no_items_available_title = "Ingen varer tilgængelige"
@@ -197,7 +188,6 @@ dk_no_items_available_title = "Ingen varer tilgængelige"
 en_no_items_available = "There are currently no items listed in the marketplace."
 dk_no_items_available = "Der er i øjeblikket ingen varer i markedspladsen."
 
-# For update profile page
 en_current_password = "Current Password"
 dk_current_password = "Nuværende adgangskode"
 
@@ -236,3 +226,18 @@ dk_username_column = "Brugernavn"
 
 en_email_column = "Email"
 dk_email_column = "E-mail"
+
+en_confirm_password_text = "Please enter your password to confirm account deletion."
+dk_confirm_password_text = "Indtast venligst din adgangskode for at bekræfte sletning af konto."
+
+en_deleting = "Deleting..."
+dk_deleting = "Sletter..."
+
+en_edit_your_fleamarket = "Edit Your Fleamarket"
+dk_edit_your_fleamarket = "Rediger Dit Loppemarked"
+
+en_register_your_fleamarket = "Register Your Fleamarket"
+dk_register_your_fleamarket = "Registrer Dit Loppemarked"
+
+en_additional_image_for = "Additional image for"
+dk_additional_image_for = "Ekstra billede til"
