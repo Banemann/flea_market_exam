@@ -2,8 +2,8 @@
     <button 
         class="unblock-btn"
         mix-patch="/unblock-item/{{ item.item_pk }}"
-        mix-await="Unblocking..."
-        mix-default="Unblock Fleamarket">
-        Unblock Fleamarket
+        mix-await="{{ languages[lan~'_please_wait'] }}"
+        mix-default="{{ languages[lan~'_unblock_fleamarket'] }}">
+        {{ languages[lan~"_unblock_fleamarket"] }}
     </button>
 </div>

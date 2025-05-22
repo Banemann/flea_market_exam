@@ -4,23 +4,23 @@
 <main id="admin" class="page"
 mix-url="/admin"
 mix-bottom="body"
-mix-title="Fleamarket | Admin"
+mix-title="Fleamarket | {{ languages[lan~'_admin_dashboard'] }}"
 mix-hide=".page"
 mix-show="#admin">
 
 
-    <header><h1>Admin Dashboard</h1></header>
+    <header><h1>{{ languages[lan~"_admin_dashboard"] }}</h1></header>
     
     <section id="users">
-        <header><h2>Users</h2></header>
+        <header><h2>{{ languages[lan~"_users"] }}</h2></header>
         <div class="users-table">
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Actions</th>
+                        <th>{{ languages[lan~"_id"] }}</th>
+                        <th>{{ languages[lan~"_username_column"] }}</th>
+                        <th>{{ languages[lan~"_email_column"] }}</th>
+                        <th>{{ languages[lan~"_actions"] }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,16 +43,16 @@ mix-show="#admin">
         </div>
     </section>
 
-    <section id="items">
-        <header><h2>Fleamarkets</h2></header>
+    <section id="adminitems">
+        <header><h2>{{ languages[lan~"_fleamarkets"] }}</h2></header>
         <div class="users-table">
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Image</th>
-                        <th>Actions</th>
+                        <th>{{ languages[lan~"_id"] }}</th>
+                        <th>{{ languages[lan~"_name_column"] }}</th>
+                        <th>{{ languages[lan~"_image"] }}</th>
+                        <th>{{ languages[lan~"_actions"] }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,9 +74,6 @@ mix-show="#admin">
             </table>
         </div>
     </section>
-
-
-
 </main>
 
 {% include "_footer.html" %}

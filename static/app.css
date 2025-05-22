@@ -342,7 +342,6 @@ nav > a:first-child {
   cursor: pointer;
 }
 
-/* Single item view */
 #right #item p {
   font-size: 1.3rem;
 }
@@ -518,86 +517,135 @@ nav > a:first-child {
 #admin {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
 }
 
 #admin h1 {
-  margin-bottom: 20px;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-dark);
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 0.5rem;
 }
 
-.users-table {
+#admin h2 {
+  font-size: 1.5rem;
+  margin: 1.5rem 0;
+  color: var(--color-dark);
+}
+
+#admin section {
+  margin-bottom: 2rem;
+}
+
+.users-table, .items-table {
   width: 100%;
   overflow-x: auto;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
 }
 
-.users-table table {
+.users-table table, .items-table table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.users-table th,
-.users-table td {
+.users-table th, .items-table th,
+.users-table td, .items-table td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.users-table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
+.users-table th, .items-table th {
+  background-color: var(--color-light);
+  font-weight: 600;
+  color: var(--color-dark);
+  border-bottom: 2px solid #e9ecef;
 }
 
-.user-row.blocked {
+.user-row.blocked, .item-row.blocked {
   background-color: #fff0f0;
+}
+
+.user-row:hover, .item-row:hover {
+  background-color: #f8f9fa;
 }
 
 .block-btn {
-  background-color: #dc3545;
+  background-color: #ff4d4d;
   color: white;
   border: none;
-  padding: 8px 12px;
+  padding: 8px 16px;
   border-radius: 4px;
+  font-weight: 500;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.block-btn:hover {
+  background-color: #ff3333;
 }
 
 .unblock-btn {
-  background-color: #28a745;
+  background-color: var(--color-primary);
   color: white;
   border: none;
-  padding: 8px 12px;
+  padding: 8px 16px;
   border-radius: 4px;
+  font-weight: 500;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.items-table {
-  width: 100%;
-  overflow-x: auto;
-  margin-top: 30px;
-  margin-bottom: 30px;
-}
-
-.items-table table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.items-table th,
-.items-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.item-row.blocked {
-  background-color: #fff0f0;
+.unblock-btn:hover {
+  background-color: #2980b9;
 }
 
 .admin-item-image {
   width: 80px;
   height: 60px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
+  transition: transform 0.2s ease-in-out;
 }
+
+.admin-item-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 600px) {
+  .users-table table th:nth-child(3),
+  .users-table table td:nth-child(3) {
+    display: none;
+  }
+  
+  .users-table table th:nth-child(3),
+  .users-table table td:nth-child(3) {
+    display: none;
+  }
+  
+  .users-table th, .items-table th,
+  .users-table td, .items-table td {
+    padding: 8px 6px;
+  }
+
+  .block-btn, .unblock-btn {
+    padding: 6px 8px;
+    font-size: 0.85rem;
+  }
+  
+  .users-table, .items-table {
+    padding: 1rem 0.75rem;
+  }
+}
+
 
 /* =======================================
   9. FLEAMARKET IMAGES
@@ -632,7 +680,6 @@ nav > a:first-child {
   cursor: pointer;
 }
 
-/* Item-specific image styles */
 #item .fleamarket-images {
   margin: 0 0 20px 0;
 }
@@ -692,7 +739,6 @@ nav > a:first-child {
   12. PROFILE PAGE
 ======================================= */
 
-/* Profile container */
 #profile {
   max-width: 800px;
   margin: 0 auto;
@@ -709,7 +755,6 @@ nav > a:first-child {
   padding-bottom: 0.5rem;
 }
 
-/* Profile information section */
 .profile-info {
   background-color: white;
   padding: 2rem;
@@ -737,13 +782,11 @@ nav > a:first-child {
   color: var(--color-dark);
 }
 
-/* Delete button container */
 #profile > div:not(.profile-info):not(.modal) {
   display: flex;
   justify-content: flex-end;
 }
 
-/* Delete button styling */
 #delete-profile-btn {
   background-color: #ff4d4d;
   color: white;
@@ -760,7 +803,6 @@ nav > a:first-child {
   background-color: #ff3333;
 }
 
-/* Modal improvements */
 #delete-confirm-modal .modal-content {
   border-radius: 8px;
   padding: 2rem;
@@ -828,7 +870,6 @@ nav > a:first-child {
   font-weight: 500;
 }
 
-/* Responsive adjustments */
 @media (max-width: 576px) {
   .profile-info {
     padding: 1.5rem;
@@ -869,6 +910,10 @@ nav > a:first-child {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
+}
+
+.edit-profile form {
+  width: 100%;
 }
 
 .edit-profile form > div {
@@ -931,7 +976,6 @@ nav > a:first-child {
   border-radius: 4px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .edit-profile {
     padding: 1.5rem;
@@ -951,6 +995,10 @@ nav > a:first-child {
   padding: 2rem;
   display: flex;
   flex-direction: column;
+}
+
+#your-fleamarket form {
+  width: 100%;
 }
 
 #your-fleamarket h1 {
@@ -1021,7 +1069,6 @@ nav > a:first-child {
   background-color: #2980b9;
 }
 
-/* Improved file input styling */
 .file-input {
   padding: 0;
   border: none;
@@ -1063,7 +1110,6 @@ nav > a:first-child {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Delete form styling */
 #your-fleamarket form[mix-post="/your-fleamarket/delete"] {
   width: 100%;
 }
@@ -1085,7 +1131,6 @@ nav > a:first-child {
   background-color: #ff3333;
 }
 
-/* Small image name display */
 .fleamarket-form small {
   display: block;
   margin-top: 0.5rem;
@@ -1093,7 +1138,6 @@ nav > a:first-child {
   font-style: italic;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   #your-fleamarket {
     padding: 1rem;
@@ -1197,3 +1241,124 @@ nav > a:first-child {
 .profile_nav a.active::after {
   width: 100%;
 }
+
+/* =======================================
+  16. LOGIN & SIGNUP PAGES
+======================================= */
+#login, #signup, #reset-password, #new-password {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+#login header, #signup header, #reset-password header, #new-password header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+#login h1, #signup h1, #reset-password h1, #new-password h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-dark);
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 0.5rem;
+}
+
+#login form, #signup form, #reset-password form, #new-password form {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+#login form > div, #signup form > div, 
+#reset-password form > div, #new-password form > div {
+  margin-bottom: 1.5rem;
+}
+
+#login label, #signup label, #reset-password label, #new-password label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+#login label span:first-child, #signup label span:first-child,
+#reset-password label span:first-child, #new-password label span:first-child {
+  font-weight: 600;
+  color: var(--color-dark);
+  margin-bottom: 0.3rem;
+}
+
+#login label span:nth-child(2), #signup label span:nth-child(2),
+#reset-password label span:nth-child(2), #new-password label span:nth-child(2) {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 0.3rem;
+}
+
+#login input, #signup input, #reset-password input, #new-password input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  height: auto;
+  font-size: 1rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+#login input:focus, #signup input:focus, 
+#reset-password input:focus, #new-password input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+#login button, #signup button, #reset-password button, #new-password button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  height: auto;
+  margin-top: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+#login button:hover, #signup button:hover, 
+#reset-password button:hover, #new-password button:hover {
+  background-color: #2980b9;
+}
+
+#login button[type="button"], #signup button[type="button"],
+#reset-password button[type="button"], #new-password button[type="button"] {
+  background-color: #f2f2f2;
+  color: var(--color-dark);
+  border: 1px solid #ddd;
+}
+
+#login button[type="button"]:hover, #signup button[type="button"]:hover,
+#reset-password button[type="button"]:hover, #new-password button[type="button"]:hover {
+  background-color: #e6e6e6;
+}
+
+#login .success-message, #signup .success-message,
+#reset-password .success-message, #new-password .success-message,
+#login .error-message, #signup .error-message,
+#reset-password .error-message, #new-password .error-message {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+@media (max-width: 576px) {
+  #login, #signup, #reset-password, #new-password {
+    padding: 1rem;
+  }
+  
+  #login form, #signup form, #reset-password form, #new-password form {
+    padding: 1.5rem;
+  }
+}
+

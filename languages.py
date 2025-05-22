@@ -221,3 +221,18 @@ dk_upload_up_to_3 = "Upload op til 3 billeder"
 
 en_open_window = "Open in window"
 dk_open_window = "Åbn i vindue"
+
+en_id = "ID"
+dk_id = "ID"
+
+en_image = "Image"
+dk_image = "Billede"
+
+en_name_column = "Name"
+dk_name_column = "Navn"
+
+en_username_column = "Username"
+dk_username_column = "Brugernavn"
+
+en_email_column = "Email"
+dk_email_column = "E-mail"

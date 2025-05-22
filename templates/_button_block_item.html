@@ -2,8 +2,8 @@
     <button 
         class="block-btn"
         mix-patch="/block-item/{{ item.item_pk }}"
-        mix-await="Blocking..."
-        mix-default="Block Fleamarket">
-        Block Fleamarket
+        mix-await="{{ languages[lan~'_please_wait'] }}"
+        mix-default="{{ languages[lan~'_block_fleamarket'] }}">
+        {{ languages[lan~"_block_fleamarket"] }}
     </button>
 </div>
