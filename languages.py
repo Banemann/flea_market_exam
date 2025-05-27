@@ -241,3 +241,21 @@ dk_register_your_fleamarket = "Registrer Dit Loppemarked"
 
 en_additional_image_for = "Additional image for"
 dk_additional_image_for = "Ekstra billede til"
+
+en_invalid_name = "Invalid name"
+dk_invalid_name = "Ugyldigt navn"
+
+en_invalid_lastname = "Invalid lastname"
+dk_invalid_lastname = "Ugyldigt efternavn"
+
+en_invalid_username = "Invalid username"
+dk_invalid_username = "Ugyldigt brugernavn"
+
+en_invalid_email = "Invalid email"
+dk_invalid_email = "Ugyldig e-mail"
+
+en_invalid_password = "Invalid password"
+dk_invalid_password = "Ugyldig adgangskode"
+
+en_reset_password_instructions = "Enter your email to receive a password reset link."
+dk_reset_password_instructions = "Indtast din e-mail for at modtage et link til nulstilling af adgangskode."

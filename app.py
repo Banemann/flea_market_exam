@@ -810,7 +810,7 @@ def reset_password_request():
         db.commit()
         
         # Send password reset email
-        x.send_reset_email(user["user_name"], user["user_last_name"], reset_key)
+        x.send_password_reset_email(user["user_name"], user["user_last_name"], reset_key, user_email)
         
         return render_template("view_reset_password.html", 
             message="If your email is registered, you will receive a password reset link shortly.",

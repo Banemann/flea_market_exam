@@ -153,13 +153,35 @@ function mixhtml(){
             if(["POST", "PUT", "PATCH"].includes(method)){
                 let errors = false
                 el.querySelectorAll("[mix-check]").forEach(el=>{
-                    el.classList.remove("mix-error")                     
+                    el.classList.remove("mix-error")    
+                    const oldError = el.parentNode.querySelector(".mix-error-message")
+if (oldError) oldError.remove()
+                 
                     const regex = el.getAttribute("mix-check")                  
                     const re = new RegExp(regex)
                     if( ! re.test(el.value) ){
-                        el.classList.add("mix-error") 
-                        errors = true
-                    }
+    el.classList.add("mix-error")
+    console.warn("❌ mix-check failed:", {
+        name: el.name,
+        value: el.value,
+        regex: regex
+    });
+
+    // Optional: show inline error message
+    const oldError = el.parentNode.querySelector(".mix-error-message")
+    if (oldError) oldError.remove()
+
+    const errorText = el.getAttribute("mix-error")
+    if (errorText) {
+        const msg = document.createElement("div")
+        msg.classList.add("mix-error-message")
+        msg.textContent = errorText
+        el.parentNode.appendChild(msg)
+    }
+
+    errors = true
+}
+
                 })                  
                 if(errors) return
             } 

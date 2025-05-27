@@ -14,62 +14,87 @@ mix-show="#signup">
     </h1>
 </header>
 
-    <div>
-        {% if message %}
+<div>
+    {% if message %}
         <div class="success-message">
             {{ message }}
         </div>
-        {% endif %}
-        
-        {% if error_message %}
+    {% endif %}
+
+    {% if error_message %}
         <div class="error-message">
             {{ error_message }}
         </div>
-        {% endif %}
+    {% endif %}
+</div>
+
+<form mix-post="/signup">
+    <!-- Username -->
+    <div>
+        <label>
+            <span>{{ languages[lan~"_username"] }}</span>
+            <span>{{ languages[lan~"_username_rules"] }}</span>
+        </label>
+        <input name="user_username"
+               type="text"
+               mix-check="{{ x.USER_USERNAME_REGEX | e }}"
+               mix-error="{{ languages[lan~'_invalid_username'] }}">
     </div>
 
-    <form mix-post="/signup">
-        <div>
-            <label for="">
-                <span>{{ languages[lan~"_username"] }}</span>
-                <span>{{ languages[lan~"_username_rules"] }}</span>
-            </label>
-            <input name="user_username" type="text" mix-check="{{ x.USER_USERNAME_REGEX }}">
-        </div> 
-        <div>
-            <label for="">
-                <span>{{ languages[lan~"_name"] }}</span>
-                <span>{{ languages[lan~"_user_name_rules"] }}</span>
-            </label>
-            <input name="user_name" type="text" mix-check="{{ x.USER_NAME_REGEX }}">
-        </div> 
-        <div>
-            <label for="">
-                <span>{{ languages[lan~"_lastname"] }}</span>
-                <span>{{ languages[lan~"_user_lastname_rules"] }}</span>
-            </label>
-            <input name="user_last_name" type="text" mix-check="{{ x.USER_LAST_NAME_REGEX }}">
-        </div>                 
-        <div>
-            <label for="">
-                <span>{{ languages[lan~"_email"] }}</span>
-                <span></span>
-            </label>
-            <input name="user_email" type="text" mix-check="{{ x.USER_EMAIL_REGEX }}">
-        </div>
-        <div>
-            <label for="">
-                <span>{{ languages[lan~"_password"] }}</span>
-                <span>{{ languages[lan~"_password_rules"] }}</span>
-            </label>
-            <input name="user_password" type="password" mix-check="{{ x.USER_PASSWORD_REGEX }}">
-        </div>        
-        <button
+    <!-- First name -->
+    <div>
+        <label>
+            <span>{{ languages[lan~"_name"] }}</span>
+            <span>{{ languages[lan~"_user_name_rules"] }}</span>
+        </label>
+        <input name="user_name"
+               type="text"
+               mix-check="{{ x.USER_NAME_REGEX | e }}"
+               mix-error="{{ languages[lan~'_invalid_name'] }}">
+    </div>
+
+    <!-- Last name -->
+    <div>
+        <label>
+            <span>{{ languages[lan~"_lastname"] }}</span>
+            <span>{{ languages[lan~"_user_lastname_rules"] }}</span>
+        </label>
+        <input name="user_last_name"
+               type="text"
+               mix-check="{{ x.USER_LAST_NAME_REGEX | e }}"
+               mix-error="{{ languages[lan~'_invalid_lastname'] }}">
+    </div>
+
+    <!-- Email -->
+    <div>
+        <label>
+            <span>{{ languages[lan~"_email"] }}</span>
+        </label>
+        <input name="user_email"
+               type="text"
+               mix-check="{{ x.USER_EMAIL_REGEX | e }}"
+               mix-error="{{ languages[lan~'_invalid_email'] }}">
+    </div>
+
+    <!-- Password -->
+    <div>
+        <label>
+            <span>{{ languages[lan~"_password"] }}</span>
+            <span>{{ languages[lan~"_password_rules"] }}</span>
+        </label>
+        <input name="user_password"
+               type="password"
+               mix-check="{{ x.USER_PASSWORD_REGEX | e }}"
+               mix-error="{{ languages[lan~'_invalid_password'] }}">
+    </div>
+
+    <!-- Submit -->
+    <button
         mix-await="{{ languages[lan~'_please_wait'] }}"
         mix-default="{{ languages[lan~'_signup'] }}">
-            {{ languages[lan~"_signup"] }}
-        </button>
-    </form>
+        {{ languages[lan~"_signup"] }}
+    </button>
+</form>
 
 </main>
 
