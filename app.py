@@ -230,25 +230,29 @@ def signup():
         ic(ex)
         if "db" in locals(): db.rollback()
         
+        
         if "username" in str(ex):
             return render_template("view_signup.html", title="Fleamarket | Signup",                            
                 error_message="Invalid username",
-                user_username_error="input_error", x=x)
+                user_username_error="input_error", x=x, lan=lan, languages=languages)
         if "lastname" in str(ex):
             return render_template("view_signup.html", title="Fleamarket | Signup",
                 error_message="Invalid last name",
-                user_last_name_error="input_error", x=x)
-        if "email" in str(ex):
-            return render_template("view_signup.html", title="Fleamarket | Signup",
-                error_message="Invalid email",
-                user_email_error="input_error", x=x)
+                user_last_name_error="input_error", x=x, lan=lan, languages=languages)
+        if "user_email" in str(ex):
+            return render_template("view_signup.html", 
+                error_message="Ugyldig emailadresse",
+                user_email_error="input_error", 
+                x=x, lan=lan, languages=languages)
+
         if "password" in str(ex):
             return render_template("view_signup.html", title="Fleamarket | Signup",
                 error_message="Invalid password",
-                user_password_error="input_error", x=x)
+                user_password_error="input_error", x=x, lan=lan, languages=languages)
             
         return render_template("view_signup.html", title="Fleamarket | Signup",
-            error_message=str(ex), x=x)
+            error_message=str(ex), x=x, lan=lan, languages=languages)
+
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()

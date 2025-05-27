@@ -26,7 +26,7 @@ def db():
 
 ##############################
 def validate_user_logged():
-    if not session.get("user"): raise Exception("compay_ex user not logged")
+    if not session.get("user"): raise Exception("company_ex user not logged")
     return session.get("user")
 
 
