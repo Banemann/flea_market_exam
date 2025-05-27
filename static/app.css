@@ -354,6 +354,8 @@ nav > a:first-child {
   width: 100%;
 }
 
+
+
 @media (max-width: 1500px) {
   #items {
     grid-template-columns: 1fr;
@@ -1359,5 +1361,46 @@ nav > a:first-child {
   
   #login form, #signup form, #reset-password form, #new-password form {
     padding: 1.5rem;
+  }
+}
+
+#item {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+#item .button {
+  display: inline-block;
+  background-color: var(--color-primary);
+  color: white;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+#item .button:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+@media (max-width: 800px) {
+  #item .item-actions {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+
+  #item .button {
+    display: block;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
   }
 }
