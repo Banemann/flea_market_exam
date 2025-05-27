@@ -235,16 +235,18 @@ def signup():
             return render_template("view_signup.html", title="Fleamarket | Signup",                            
                 error_message="Invalid username",
                 user_username_error="input_error", x=x, lan=lan, languages=languages)
+        
         if "lastname" in str(ex):
             return render_template("view_signup.html", title="Fleamarket | Signup",
                 error_message="Invalid last name",
                 user_last_name_error="input_error", x=x, lan=lan, languages=languages)
+        
         if "user_email" in str(ex):
             return render_template("view_signup.html", 
-                error_message="Ugyldig emailadresse",
+                error_message="Invalid email address or email already exists",
                 user_email_error="input_error", 
                 x=x, lan=lan, languages=languages)
-
+        
         if "password" in str(ex):
             return render_template("view_signup.html", title="Fleamarket | Signup",
                 error_message="Invalid password",
