@@ -259,3 +259,27 @@ dk_invalid_password = "Ugyldig adgangskode"
 
 en_reset_password_instructions = "Enter your email to receive a password reset link."
 dk_reset_password_instructions = "Indtast din e-mail for at modtage et link til nulstilling af adgangskode."
+
+en_update_password = "Update Password"
+dk_update_password = "Opdater adgangskode"
+
+en_create_new_password = "Create New Password"
+dk_create_new_password = "Opret ny adgangskode"
+
+en_enter_new_password = "Enter New Password"
+dk_enter_new_password = "Indtast ny adgangskode"
+
+en_new_password = "New Password"
+dk_new_password = "Ny adgangskode"
+
+en_confirm_password = "Confirm Password"
+dk_confirm_password = "Bekræft adgangskode"
+
+en_to = "to"
+dk_to = "til"
+
+en_characters = "characters"
+dk_characters = "tegn"
+
+en_admin = "Admin"
+dk_admin = "Admin"

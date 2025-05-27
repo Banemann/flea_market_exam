@@ -13,6 +13,9 @@
     
     {% if "user" in session and session["user"] %}
     <div class="util_nav">
+    {% if session["user"].get("user_is_admin", 0) == 1 %}
+    <a href="/admin" mix-get="/admin" mix-page>{{ languages[lan~"_admin"] }}</a>
+    {% endif %}
     <a href="/profile" mix-get="/profile" mix-page>{{ languages[lan~"_profile"] }}</a>
     <a href="/logout" mix-get="/logout" mix-page>{{ languages[lan~"_logout"] }}</a>
     </div>

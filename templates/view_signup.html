@@ -29,7 +29,6 @@ mix-show="#signup">
 </div>
 
 <form mix-post="/signup">
-    <!-- Username -->
     <div>
         <label>
             <span>{{ languages[lan~"_username"] }}</span>
@@ -41,7 +40,6 @@ mix-show="#signup">
                mix-error="{{ languages[lan~'_invalid_username'] }}">
     </div>
 
-    <!-- First name -->
     <div>
         <label>
             <span>{{ languages[lan~"_name"] }}</span>
@@ -53,7 +51,6 @@ mix-show="#signup">
                mix-error="{{ languages[lan~'_invalid_name'] }}">
     </div>
 
-    <!-- Last name -->
     <div>
         <label>
             <span>{{ languages[lan~"_lastname"] }}</span>
@@ -65,7 +62,6 @@ mix-show="#signup">
                mix-error="{{ languages[lan~'_invalid_lastname'] }}">
     </div>
 
-    <!-- Email -->
     <div>
         <label>
             <span>{{ languages[lan~"_email"] }}</span>
@@ -76,7 +72,6 @@ mix-show="#signup">
                mix-error="{{ languages[lan~'_invalid_email'] }}">
     </div>
 
-    <!-- Password -->
     <div>
         <label>
             <span>{{ languages[lan~"_password"] }}</span>
@@ -88,7 +83,6 @@ mix-show="#signup">
                mix-error="{{ languages[lan~'_invalid_password'] }}">
     </div>
 
-    <!-- Submit -->
     <button
         mix-await="{{ languages[lan~'_please_wait'] }}"
         mix-default="{{ languages[lan~'_signup'] }}">

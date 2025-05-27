@@ -1183,8 +1183,8 @@ def view_admin():
         cursor.execute(q_items)
         items = cursor.fetchall()
         
-        return render_template("view_admin.html", users=users, items=items, 
-                            lan=lan, languages=languages)
+        return render_template("view_admin.html", title="Fleamarket | Admin Dashboard", 
+                    users=users, items=items, lan=lan, languages=languages)
     except Exception as ex:
         ic(ex)
         return str(ex)
