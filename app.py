@@ -173,7 +173,6 @@ def get_items_by_page(page_number):
                     page number invalid
                 </mixhtml>
             """
-        # worst case, we cannot control exceptions
         return """
             <mixhtml mix-top="body">
                 ups
@@ -990,14 +989,14 @@ def delete_account():
 @app.get("/search")
 def search():
     try:
-        search_for = request.args.get("q", "") # car
+        search_for = request.args.get("q", "") 
         # TODO: validate search_for
         db, cursor = x.db()
         q = "SELECT * FROM items WHERE item_name LIKE %s"
         cursor.execute(q, (f"{search_for}%",))
         rows = cursor.fetchall()
         ic(rows)
-        return rows # [{'item_name': 'aa1', 'item_pk': '193e055791ed4f...
+        return rows
     except Exception as ex:
         ic(ex)
         return "x", 400
