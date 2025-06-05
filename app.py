@@ -231,7 +231,6 @@ def signup():
 
     except Exception as ex:
         ic(ex)
-        ic(str(ex)) 
         if "db" in locals(): db.rollback()
         
         field_name = ""
