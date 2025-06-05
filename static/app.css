@@ -714,7 +714,7 @@ nav > a:first-child {
 }
 
 .mix-hidden {
-  display: none !important;
+  display: none;
 }
 
 .ml {

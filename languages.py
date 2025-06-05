@@ -283,3 +283,9 @@ dk_characters = "tegn"
 
 en_admin = "Admin"
 dk_admin = "Admin"
+
+en_username_exists = "Username already exists"
+dk_username_exists = "Brugernavn findes allerede"
+
+en_email_exists = "Email already exists"
+dk_email_exists = "E-mail findes allerede"

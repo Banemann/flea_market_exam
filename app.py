@@ -224,35 +224,47 @@ def signup():
 
         db.commit()
         x.send_verification_email(user_name, user_last_name, verification_key, user_email)
-        return redirect(url_for("view_login", message="Signup successful! Please check your email to verify your account before logging in."))
+        return f"""
+        <mixhtml mix-redirect="/login?message=Signup successful! Please check your email to verify your account before logging in.">
+        </mixhtml>
+        """
+
     except Exception as ex:
         ic(ex)
+        ic(str(ex)) 
         if "db" in locals(): db.rollback()
         
-        
-        if "username" in str(ex):
-            return render_template("view_signup.html", title="Fleamarket | Signup",                            
-                error_message="Invalid username",
-                user_username_error="input_error", x=x, lan=lan, languages=languages)
-        
+        field_name = ""
         if "lastname" in str(ex):
-            return render_template("view_signup.html", title="Fleamarket | Signup",
-                error_message="Invalid last name",
-                user_last_name_error="input_error", x=x, lan=lan, languages=languages)
-        
-        if "user_email" in str(ex):
-            return render_template("view_signup.html", 
-                error_message="Invalid email address or email already exists",
-                user_email_error="input_error", 
-                x=x, lan=lan, languages=languages)
-        
-        if "password" in str(ex):
-            return render_template("view_signup.html", title="Fleamarket | Signup",
-                error_message="Invalid password",
-                user_password_error="input_error", x=x, lan=lan, languages=languages)
+            error_text = languages[lan+"_invalid_lastname"]
+            field_name = "user_last_name" 
+        elif "password" in str(ex):
+            error_text = languages[lan+"_invalid_password"]
+            field_name = "user_password"
+        elif "Duplicate entry" in str(ex) and "@" in str(ex):
+            error_text = getattr(languages, lan + "_email_exists")
+            field_name = "user_email"
+        elif "Duplicate entry" in str(ex) and "user_username" in str(ex):
+            error_text = getattr(languages, lan + "_username_exists")
+            field_name = "user_username"
+        elif "user_email" in str(ex):
+            error_text = languages[lan+"_email_exists"]
+            field_name = "user_email"
+        elif "username" in str(ex):
+            error_text = languages[lan+"_invalid_username"]
+            field_name = "user_username"
+        else:
+            error_text = str(ex)
             
-        return render_template("view_signup.html", title="Fleamarket | Signup",
-            error_message=str(ex), x=x, lan=lan, languages=languages)
+        return f"""
+        <mixhtml>
+            <mixhtml mix-replace=".error-message">
+                <div class="error-message" style="display:block;">{error_text}</div>
+            </mixhtml>
+            <mixhtml mix-add-class="[name='{field_name}']" class="mix-error"></mixhtml>
+        </mixhtml>
+        """
+
 
     finally:
         if "cursor" in locals(): cursor.close()
