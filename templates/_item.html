@@ -22,10 +22,12 @@
     </address>
 
     <div class="item-price">
-        {{ "{:,}".format(item.item_price) }} DKK
-        /
-        {{ "{:,.2f}".format(item.item_price * 0.146) }} USD
-    </div>
+    {% if lan == "en" %}
+    {{ "{:.2f}".format(item.item_price * 0.134) }} EUR
+    {% else %}
+    {{ "{:,}".format(item.item_price) }} DKK
+    {% endif %}
+</div>
     
     {% if not standalone|default(false) %}
     <div class="item-actions">

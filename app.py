@@ -462,11 +462,21 @@ def add_fleamarket():
         if "user" not in session or not session["user"]:
             return redirect(url_for("view_login", error_message="Please login"))
         
+        lan = session.get("language", "en")
         user_pk = session["user"]["user_pk"]
         item_pk = uuid.uuid4().hex
         item_name = x.validate_item_name()
         item_address = x.validate_item_address()
-        item_price = x.validate_item_price()
+        
+        if lan == "en" and request.form.get("item_price"):
+            try:
+                price_in_eur = float(request.form.get("item_price", "0").strip())
+                item_price = int(price_in_eur / 0.134 * 100) / 100 
+            except ValueError:
+                item_price = x.validate_item_price()
+        else:
+            item_price = x.validate_item_price()
+
         item_latitude = x.validate_item_latitude()  
         item_longitude = x.validate_item_longitude()
         item_created_at = int(time.time())
@@ -535,12 +545,21 @@ def update_fleamarket():
     try:
         if "user" not in session or not session["user"]:
             return redirect(url_for("view_login", error_message="Please login"))
-        
+        lan = session.get("language", "en")
         user_pk = session["user"]["user_pk"]
         item_pk = request.form.get("item_pk", "").strip()
         item_name = x.validate_item_name()
         item_address = x.validate_item_address()
-        item_price = x.validate_item_price()
+
+        if lan == "en" and request.form.get("item_price"):
+            try:
+                price_in_eur = float(request.form.get("item_price", "0").strip())
+                item_price = int(price_in_eur / 0.134 * 100) / 100
+            except ValueError:
+                item_price = x.validate_item_price()
+        else:
+            item_price = x.validate_item_price()
+
         item_latitude = x.validate_item_latitude()  
         item_longitude = x.validate_item_longitude()
         item_updated_at = int(time.time())

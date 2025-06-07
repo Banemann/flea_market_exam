@@ -58,7 +58,7 @@ function add_markers_to_map(data){
         // Create custom icon for each marker
         var customIcon = L.divIcon({
             className: 'custom-marker', // Class for custom styling
-            html: `<div mix-get="/items/${item.item_pk}" class="custom-marker">${item.item_name.charAt(0)}</div>`, // Custom content inside the div
+            html: `<div mix-get="/items/${item.item_pk}" class="custom-marker">${item.item_name.slice(0, 2)}</div>`, // Custom content inside the div
             iconSize: [50, 50], // Size of the div
             iconAnchor: [25, 25], // Anchor point (center of the div)
         });

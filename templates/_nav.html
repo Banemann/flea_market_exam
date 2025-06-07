@@ -1,5 +1,5 @@
 <nav class="nav">
-    <a href="/" mix-get="/" mix-page>Banemarket</a>
+    <a href="/">Banemarket</a>
     <div id="search_container">
         <input id="input_search" oninput="search()" class="" type="text" placeholder="{{ languages[lan~'_search'] }}">
         <div id="search_results" class="hidden">
@@ -14,16 +14,16 @@
     {% if "user" in session and session["user"] %}
     <div class="util_nav">
     {% if session["user"].get("user_is_admin", 0) == 1 %}
-    <a href="/admin" mix-get="/admin" mix-page>{{ languages[lan~"_admin"] }}</a>
+    <a href="/admin" {% if request.path == '/admin' %}class="active"{% endif %}>{{ languages[lan~"_admin"] }}</a>
     {% endif %}
-    <a href="/profile" mix-get="/profile" mix-page>{{ languages[lan~"_profile"] }}</a>
+    <a href="/profile" {% if request.path == '/profile' or request.path == '/update-profile' or request.path == '/your-fleamarket' %}class="active"{% endif %}>{{ languages[lan~"_profile"] }}</a>
     <a href="/logout" mix-get="/logout" mix-page>{{ languages[lan~"_logout"] }}</a>
     </div>
 
     {% else %}
     <div class="util_nav">
-        <a href="/signup" mix-get="/signup" mix-page>{{ languages[lan~"_signup"] }}</a>
-        <a href="/login" mix-get="/login" mix-page>{{ languages[lan~"_login"] }}</a>
+        <a href="/signup"  {% if request.path == '/signup' %}class="active"{% endif %}>{{ languages[lan~"_signup"] }}</a>
+        <a href="/login" {% if request.path == '/login' or request.path == '/reset-password' %}class="active"{% endif %}>{{ languages[lan~"_login"] }}</a>
     </div>
     {% endif %}
 </nav>

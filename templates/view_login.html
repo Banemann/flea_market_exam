@@ -1,12 +1,7 @@
 {% include "_header.html" %}
 {% include "_nav.html" %}
 
-<main id="login" class="page"
-mix-url="/login"
-mix-bottom="body"
-mix-title="{{ title | default('Company') }}"
-mix-hide=".page"
-mix-show="#login">
+<main id="login" class="page">
 
     <header>
         <h1>{{ languages[lan~"_login"] }}</h1>
@@ -26,38 +21,31 @@ mix-show="#login">
         {% endif %}
     </div>
 
-
-    <form mix-post="/login">    
+    <form method="post" action="/login" mix-post="/login">    
         <div>
-            <label for="">
+            <label>
                 <span>{{ languages[lan~"_username"] }}</span>
             </label>
-            <input name="user_username" type="text" mix-check="{{ x.USER_USERNAME_REGEX }}">
+            <input name="user_username" type="text" pattern="{{ x.USER_USERNAME_REGEX }}">
         </div>
         <div>
-            <label for="">
+            <label>
                 <span>{{ languages[lan~"_password"] }}</span>
             </label>
-            <input name="user_password" type="password" mix-check="{{ x.USER_PASSWORD_REGEX }}">
+            <input name="user_password" type="password" pattern="{{ x.USER_PASSWORD_REGEX }}">
         </div>    
             
-        <button
-        mix-await="{{ languages[lan~'_please_wait'] }}"
-        mix-default="{{ languages[lan~'_login'] }}">
+        <button type="submit">
             {{ languages[lan~"_login"] }}
-        </button>
-
-        <button 
-        type="button"
-        mix-get="/reset-password"
-        mix-page
-        mix-await="{{ languages[lan~'_please_wait'] }}"
-        mix-default="{{ languages[lan~'_reset_password'] }}">
-            {{ languages[lan~"_reset_password"] }}
         </button>
     </form>
 
-</main>
+    <div class="reset-password">
+        <a class="resetbutton" href="/reset-password">
+            {{ languages[lan~"_reset_password"] }}
+        </a>
+    </div>
 
+</main>
 
 {% include "_footer.html" %}

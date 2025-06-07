@@ -75,11 +75,11 @@ mix-show="#your-fleamarket">
             </div>
     
             <div>
-                <label for="">
-                    <span>{{ languages[lan~"_ticket_price"] }} (DKK)</span>
-                </label>
-                <input name="item_price" type="text" mix-check="{{ x.ITEM_PRICE_REGEX }}" value="{{ user_fleamarket.item_price }}">
-            </div>
+    <label for="">
+        <span>{{ languages[lan~"_ticket_price"] }} {% if lan == "en" %}(EUR){% else %}(DKK){% endif %}</span>
+    </label>
+    <input name="item_price" type="text" mix-check="{{ x.ITEM_PRICE_REGEX }}" value="{% if lan == 'en' %}{{ (user_fleamarket.item_price * 0.134) | round(2) }}{% else %}{{ user_fleamarket.item_price }}{% endif %}">
+</div>
     
             <div>
                 <label for="">
@@ -137,11 +137,11 @@ mix-show="#your-fleamarket">
             </div>
     
             <div>
-                <label for="">
-                    <span>{{ languages[lan~"_ticket_price"] }} (DKK)</span>
-                </label>
-                <input name="item_price" type="text" mix-check="{{ x.ITEM_PRICE_REGEX }}">
-            </div>
+    <label for="">
+        <span>{{ languages[lan~"_ticket_price"] }} {% if lan == "en" %}(EUR){% else %}(DKK){% endif %}</span>
+    </label>
+    <input name="item_price" type="text" mix-check="{{ x.ITEM_PRICE_REGEX }}">
+</div>
     
             <div>
                 <label for="">

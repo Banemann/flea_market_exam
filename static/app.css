@@ -721,6 +721,19 @@ nav > a:first-child {
   margin-left: auto;
 }
 
+.util_nav a.active {
+  color: var(--color-primary);
+}
+
+.util_nav a.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-primary);
+}
 /* =======================================
   11. ANIMATIONS
 ======================================= */
@@ -1316,7 +1329,7 @@ nav > a:first-child {
   box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
 }
 
-#login button, #signup button, #reset-password button, #new-password button {
+#login .resetbutton, #signup button, #reset-password button, #new-password button {
   background-color: var(--color-primary);
   color: white;
   border: none;
@@ -1327,6 +1340,14 @@ nav > a:first-child {
   height: auto;
   margin-top: 0.5rem;
   transition: background-color 0.2s;
+}
+
+.resetbutton{
+  text-decoration: none;
+}
+
+.reset-password{
+  margin-top: 0.5rem;
 }
 
 #login button:hover, #signup button:hover, 
