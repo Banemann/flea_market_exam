@@ -471,7 +471,7 @@ def add_fleamarket():
         if lan == "en" and request.form.get("item_price"):
             try:
                 price_in_eur = float(request.form.get("item_price", "0").strip())
-                item_price = int(price_in_eur / 0.134 * 100) / 100 
+                item_price = round(price_in_eur / 0.134, 2)
             except ValueError:
                 item_price = x.validate_item_price()
         else:
@@ -554,7 +554,7 @@ def update_fleamarket():
         if lan == "en" and request.form.get("item_price"):
             try:
                 price_in_eur = float(request.form.get("item_price", "0").strip())
-                item_price = int(price_in_eur / 0.134 * 100) / 100
+                item_price = round(price_in_eur / 0.134, 2)
             except ValueError:
                 item_price = x.validate_item_price()
         else:
