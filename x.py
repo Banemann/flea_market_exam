@@ -92,6 +92,14 @@ def validate_user_password():
     if not re.match(USER_PASSWORD_REGEX, user_password): raise Exception(error)
     return user_password
 
+# # BEDRE REQUIREMENTS
+# USER_PASSWORD_REGEX = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#._-])[A-Za-z\d@$!%*?&#._-]{8,64}$"
+# def validate_user_password():
+#     error = "company_ex user_password"
+#     user_password = request.form.get("user_password", "").strip()
+#     if not re.match(USER_PASSWORD_REGEX, user_password): raise Exception(error)
+#     return user_password
+
 
 ##############################
 ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "gif"]
