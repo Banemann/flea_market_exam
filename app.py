@@ -260,7 +260,6 @@ def signup():
             <mixhtml mix-replace=".error-message">
                 <div class="error-message" style="display:block;">{error_text}</div>
             </mixhtml>
-            <mixhtml mix-add-class="[name='{field_name}']" class="mix-error"></mixhtml>
         </mixhtml>
         """
 
