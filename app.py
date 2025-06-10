@@ -1018,17 +1018,15 @@ def delete_account():
 @app.get("/search")
 def search():
     try:
-        search_for = request.args.get("q", "") 
-        # TODO: validate search_for
+        search_for = x.validate_search_query() 
         db, cursor = x.db()
         q = "SELECT * FROM items WHERE item_name LIKE %s"
         cursor.execute(q, (f"{search_for}%",))
         rows = cursor.fetchall()
-        ic(rows)
         return rows
     except Exception as ex:
         ic(ex)
-        return "x", 400
+        return [], 400
 
 
 ##############################

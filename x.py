@@ -315,6 +315,18 @@ def user_verification_key():
     return str(uuid.uuid4())
 
 
+##############################
+SEARCH_MIN = 1
+SEARCH_MAX = 50
+SEARCH_REGEX = r"^[a-zA-Z0-9 æøåÆØÅ'\"-]{1,50}$"
+
+def validate_search_query():
+    search_for = request.args.get("q", "").strip()
+    if not re.match(SEARCH_REGEX, search_for):
+        raise Exception("Invalid search query")
+    if not (SEARCH_MIN <= len(search_for) <= SEARCH_MAX):
+        raise Exception("Search query length error")
+    return search_for
 
 
 
