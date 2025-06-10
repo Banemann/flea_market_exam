@@ -317,8 +317,8 @@ def user_verification_key():
 
 ##############################
 SEARCH_MIN = 1
-SEARCH_MAX = 50
-SEARCH_REGEX = r"^[a-zA-Z0-9 æøåÆØÅ'\"-]{1,50}$"
+SEARCH_MAX = 30
+SEARCH_REGEX = r"^[a-zA-Z0-9 æøåÆØÅ'\"-]{1,30}$"
 
 def validate_search_query():
     search_for = request.args.get("q", "").strip()
